@@ -1,0 +1,905 @@
+-- FC04 done to 0x00FF, 45 addr/s
+-- FC04 done to 0x01FF, 45 addr/s
+-- FC04 done to 0x02FF, 45 addr/s
+-- FC04 done to 0x03FF, 45 addr/s
+-- FC04 done to 0x04FF, 45 addr/s
+-- FC04 done to 0x05FF, 45 addr/s
+-- FC04 done to 0x06FF, 45 addr/s
+-- FC04 done to 0x07FF, 45 addr/s
+-- FC04 done to 0x08FF, 45 addr/s
+-- FC04 done to 0x09FF, 45 addr/s
+-- FC04 done to 0x0AFF, 45 addr/s
+-- FC04 done to 0x0BFF, 45 addr/s
+-- FC04 done to 0x0CFF, 45 addr/s
+-- FC04 done to 0x0DFF, 45 addr/s
+-- FC04 done to 0x0EFF, 45 addr/s
+-- FC04 done to 0x0FFF, 45 addr/s
+-- FC04 done to 0x10FF, 45 addr/s
+-- FC04 done to 0x11FF, 45 addr/s
+-- FC04 done to 0x12FF, 45 addr/s
+-- FC04 done to 0x13FF, 45 addr/s
+-- FC04 done to 0x14FF, 45 addr/s
+-- FC04 done to 0x15FF, 45 addr/s
+-- FC04 done to 0x16FF, 45 addr/s
+-- FC04 done to 0x17FF, 45 addr/s
+-- FC04 done to 0x18FF, 45 addr/s
+-- FC04 done to 0x19FF, 45 addr/s
+-- FC04 done to 0x1AFF, 45 addr/s
+-- FC04 done to 0x1BFF, 45 addr/s
+-- FC04 done to 0x1CFF, 45 addr/s
+-- FC04 done to 0x1DFF, 45 addr/s
+-- FC04 done to 0x1EFF, 45 addr/s
+-- FC04 done to 0x1FFF, 45 addr/s
+-- FC04 done to 0x20FF, 45 addr/s
+-- FC04 done to 0x21FF, 45 addr/s
+-- FC04 done to 0x22FF, 45 addr/s
+-- FC04 done to 0x23FF, 45 addr/s
+-- FC04 done to 0x24FF, 45 addr/s
+-- FC04 done to 0x25FF, 45 addr/s
+-- FC04 done to 0x26FF, 45 addr/s
+-- FC04 done to 0x27FF, 45 addr/s
+-- FC04 done to 0x28FF, 45 addr/s
+-- FC04 done to 0x29FF, 45 addr/s
+-- FC04 done to 0x2AFF, 45 addr/s
+-- FC04 done to 0x2BFF, 45 addr/s
+-- FC04 done to 0x2CFF, 45 addr/s
+-- FC04 done to 0x2DFF, 45 addr/s
+-- FC04 done to 0x2EFF, 45 addr/s
+-- FC04 done to 0x2FFF, 45 addr/s
+FC04 0x3000 {'v': 10000}
+FC04 0x3001 {'v': 3000}
+FC04 0x3002 {'v': 12464}
+FC04 0x3003 {'v': 1}
+FC04 0x3004 {'v': 2400}
+FC04 0x3005 {'v': 3000}
+FC04 0x3006 {'v': 12464}
+FC04 0x3007 {'v': 1}
+FC04 0x3008 {'v': 2}
+FC04 0x300E {'v': 3000}
+FC04 0x3011 {'v': 0}
+-- FC04 done to 0x30FF, 45 addr/s
+FC04 0x3100 {'v': 550}
+FC04 0x3101 {'v': 0}
+FC04 0x3102 {'v': 0}
+FC04 0x3103 {'v': 0}
+FC04 0x3104 {'v': 1298}
+FC04 0x3105 {'v': 0}
+FC04 0x3106 {'v': 0}
+FC04 0x3107 {'v': 0}
+FC04 0x3108 {'v': 1298}
+FC04 0x3109 {'v': 258}
+FC04 0x310A {'v': 2131}
+FC04 0x310B {'v': 0}
+FC04 0x310C {'v': 1293}
+FC04 0x310D {'v': 117}
+FC04 0x310E {'v': 1155}
+FC04 0x310F {'v': 0}
+FC04 0x3110 {'v': 2253}
+FC04 0x3111 {'v': 2563}
+FC04 0x3112 {'v': 2562}
+FC04 0x3113 {'v': 2254}
+FC04 0x311A {'v': 80}
+FC04 0x311B {'v': 0}
+FC04 0x311D {'v': 1200}
+FC04 0x3170 {'v': 0}
+FC04 0x3171 {'v': 550}
+FC04 0x3172 {'v': 0}
+FC04 0x3173 {'v': 0}
+FC04 0x3174 {'v': 0}
+FC04 0x3175 {'v': 1298}
+FC04 0x3176 {'v': 104}
+FC04 0x3177 {'v': 1220}
+FC04 0x3178 {'v': 0}
+FC04 0x3179 {'v': 2254}
+FC04 0x317A {'v': 2255}
+FC04 0x317B {'v': 80}
+FC04 0x317C {'v': 0}
+FC04 0x317D {'v': 1}
+FC04 0x317E {'v': 1}
+FC04 0x317F {'v': 2315}
+FC04 0x3180 {'v': 0}
+FC04 0x3181 {'v': 1417}
+FC04 0x3182 {'v': 1194}
+FC04 0x3183 {'v': 47}
+FC04 0x3184 {'v': 0}
+FC04 0x3185 {'v': 911}
+FC04 0x3186 {'v': 0}
+FC04 0x3187 {'v': 12328}
+FC04 0x3188 {'v': 0}
+FC04 0x3189 {'v': 46124}
+FC04 0x318A {'v': 0}
+FC04 0x318B {'v': 46}
+FC04 0x318C {'v': 0}
+FC04 0x318D {'v': 592}
+FC04 0x318E {'v': 0}
+FC04 0x318F {'v': 12797}
+FC04 0x3190 {'v': 0}
+FC04 0x3191 {'v': 61713}
+FC04 0x3192 {'v': 0}
+FC04 0x3193 {'v': 1296}
+FC04 0x3194 {'v': 65197}
+FC04 0x3195 {'v': 65535}
+FC04 0x31A0 {'v': 1500}
+FC04 0x31A1 {'v': 1460}
+FC04 0x31A2 {'v': 1420}
+FC04 0x31A3 {'v': 1400}
+FC04 0x31A4 {'v': 1400}
+FC04 0x31A5 {'v': 1350}
+FC04 0x31A6 {'v': 1320}
+FC04 0x31A7 {'v': 1240}
+FC04 0x31A8 {'v': 1200}
+FC04 0x31A9 {'v': 1160}
+FC04 0x31AA {'v': 1080}
+FC04 0x31AB {'v': 1040}
+FC04 0x31AD {'v': 1400}
+FC04 0x31AE {'v': 0}
+FC04 0x31AF {'v': 0}
+FC04 0x31B0 {'v': 6466}
+FC04 0x31B1 {'v': 0}
+FC04 0x31B2 {'v': 0}
+FC04 0x31B3 {'v': 0}
+FC04 0x31B4 {'v': 0}
+FC04 0x31B5 {'v': 50966}
+FC04 0x31B6 {'v': 0}
+-- FC04 done to 0x31FF, 45 addr/s
+FC04 0x3200 {'v': 0}
+FC04 0x3201 {'v': 1}
+FC04 0x3202 {'v': 1}
+-- FC04 done to 0x32FF, 45 addr/s
+FC04 0x3300 {'v': 2315}
+FC04 0x3301 {'v': 0}
+FC04 0x3302 {'v': 1417}
+FC04 0x3303 {'v': 1194}
+FC04 0x3304 {'v': 47}
+FC04 0x3305 {'v': 0}
+FC04 0x3306 {'v': 911}
+FC04 0x3307 {'v': 0}
+FC04 0x3308 {'v': 12328}
+FC04 0x3309 {'v': 0}
+FC04 0x330A {'v': 46124}
+FC04 0x330B {'v': 0}
+FC04 0x330C {'v': 46}
+FC04 0x330D {'v': 0}
+FC04 0x330E {'v': 592}
+FC04 0x330F {'v': 0}
+FC04 0x3310 {'v': 12797}
+FC04 0x3311 {'v': 0}
+FC04 0x3312 {'v': 61713}
+FC04 0x3313 {'v': 0}
+FC04 0x3314 {'v': 61}
+FC04 0x3315 {'v': 0}
+FC04 0x3316 {'v': 0}
+FC04 0x3317 {'v': 0}
+FC04 0x3318 {'v': 145}
+FC04 0x3319 {'v': 0}
+FC04 0x331A {'v': 1296}
+FC04 0x331B {'v': 65256}
+FC04 0x331C {'v': 65535}
+FC04 0x331D {'v': 2253}
+FC04 0x331E {'v': 2253}
+-- FC04 done to 0x33FF, 45 addr/s
+-- FC04 done to 0x34FF, 45 addr/s
+-- FC04 done to 0x35FF, 45 addr/s
+-- FC04 done to 0x36FF, 45 addr/s
+-- FC04 done to 0x37FF, 45 addr/s
+-- FC04 done to 0x38FF, 45 addr/s
+-- FC04 done to 0x39FF, 45 addr/s
+-- FC04 done to 0x3AFF, 45 addr/s
+-- FC04 done to 0x3BFF, 45 addr/s
+-- FC04 done to 0x3CFF, 45 addr/s
+-- FC04 done to 0x3DFF, 45 addr/s
+-- FC04 done to 0x3EFF, 45 addr/s
+-- FC04 done to 0x3FFF, 45 addr/s
+-- FC04 done to 0x40FF, 45 addr/s
+-- FC04 done to 0x41FF, 45 addr/s
+-- FC04 done to 0x42FF, 45 addr/s
+-- FC04 done to 0x43FF, 45 addr/s
+-- FC04 done to 0x44FF, 45 addr/s
+-- FC04 done to 0x45FF, 45 addr/s
+-- FC04 done to 0x46FF, 45 addr/s
+-- FC04 done to 0x47FF, 45 addr/s
+-- FC04 done to 0x48FF, 45 addr/s
+-- FC04 done to 0x49FF, 45 addr/s
+-- FC04 done to 0x4AFF, 45 addr/s
+-- FC04 done to 0x4BFF, 45 addr/s
+-- FC04 done to 0x4CFF, 45 addr/s
+-- FC04 done to 0x4DFF, 45 addr/s
+-- FC04 done to 0x4EFF, 45 addr/s
+-- FC04 done to 0x4FFF, 45 addr/s
+-- FC04 done to 0x50FF, 45 addr/s
+-- FC04 done to 0x51FF, 45 addr/s
+-- FC04 done to 0x52FF, 45 addr/s
+-- FC04 done to 0x53FF, 45 addr/s
+-- FC04 done to 0x54FF, 45 addr/s
+-- FC04 done to 0x55FF, 45 addr/s
+-- FC04 done to 0x56FF, 45 addr/s
+-- FC04 done to 0x57FF, 45 addr/s
+-- FC04 done to 0x58FF, 45 addr/s
+-- FC04 done to 0x59FF, 45 addr/s
+-- FC04 done to 0x5AFF, 45 addr/s
+-- FC04 done to 0x5BFF, 45 addr/s
+-- FC04 done to 0x5CFF, 45 addr/s
+-- FC04 done to 0x5DFF, 45 addr/s
+-- FC04 done to 0x5EFF, 45 addr/s
+-- FC04 done to 0x5FFF, 45 addr/s
+-- FC04 done to 0x60FF, 45 addr/s
+-- FC04 done to 0x61FF, 45 addr/s
+-- FC04 done to 0x62FF, 45 addr/s
+-- FC04 done to 0x63FF, 45 addr/s
+-- FC04 done to 0x64FF, 45 addr/s
+-- FC04 done to 0x65FF, 45 addr/s
+-- FC04 done to 0x66FF, 45 addr/s
+-- FC04 done to 0x67FF, 45 addr/s
+-- FC04 done to 0x68FF, 45 addr/s
+-- FC04 done to 0x69FF, 45 addr/s
+-- FC04 done to 0x6AFF, 45 addr/s
+-- FC04 done to 0x6BFF, 45 addr/s
+-- FC04 done to 0x6CFF, 45 addr/s
+-- FC04 done to 0x6DFF, 45 addr/s
+-- FC04 done to 0x6EFF, 45 addr/s
+-- FC04 done to 0x6FFF, 45 addr/s
+-- FC04 done to 0x70FF, 45 addr/s
+-- FC04 done to 0x71FF, 45 addr/s
+-- FC04 done to 0x72FF, 45 addr/s
+-- FC04 done to 0x73FF, 45 addr/s
+-- FC04 done to 0x74FF, 45 addr/s
+-- FC04 done to 0x75FF, 45 addr/s
+-- FC04 done to 0x76FF, 45 addr/s
+-- FC04 done to 0x77FF, 45 addr/s
+-- FC04 done to 0x78FF, 45 addr/s
+-- FC04 done to 0x79FF, 45 addr/s
+-- FC04 done to 0x7AFF, 45 addr/s
+-- FC04 done to 0x7BFF, 45 addr/s
+-- FC04 done to 0x7CFF, 45 addr/s
+-- FC04 done to 0x7DFF, 45 addr/s
+-- FC04 done to 0x7EFF, 45 addr/s
+-- FC04 done to 0x7FFF, 45 addr/s
+-- FC04 done to 0x80FF, 45 addr/s
+-- FC04 done to 0x81FF, 45 addr/s
+-- FC04 done to 0x82FF, 45 addr/s
+-- FC04 done to 0x83FF, 45 addr/s
+-- FC04 done to 0x84FF, 45 addr/s
+-- FC04 done to 0x85FF, 45 addr/s
+-- FC04 done to 0x86FF, 45 addr/s
+-- FC04 done to 0x87FF, 45 addr/s
+-- FC04 done to 0x88FF, 45 addr/s
+-- FC04 done to 0x89FF, 45 addr/s
+-- FC04 done to 0x8AFF, 45 addr/s
+-- FC04 done to 0x8BFF, 45 addr/s
+-- FC04 done to 0x8CFF, 45 addr/s
+-- FC04 done to 0x8DFF, 45 addr/s
+-- FC04 done to 0x8EFF, 45 addr/s
+-- FC04 done to 0x8FFF, 45 addr/s
+-- FC04 done to 0x90FF, 45 addr/s
+-- FC04 done to 0x91FF, 45 addr/s
+-- FC04 done to 0x92FF, 45 addr/s
+-- FC04 done to 0x93FF, 45 addr/s
+-- FC04 done to 0x94FF, 45 addr/s
+-- FC04 done to 0x95FF, 45 addr/s
+-- FC04 done to 0x96FF, 45 addr/s
+-- FC04 done to 0x97FF, 45 addr/s
+-- FC04 done to 0x98FF, 45 addr/s
+-- FC04 done to 0x99FF, 45 addr/s
+-- FC04 done to 0x9AFF, 45 addr/s
+-- FC04 done to 0x9BFF, 45 addr/s
+-- FC04 done to 0x9CFF, 45 addr/s
+-- FC04 done to 0x9DFF, 45 addr/s
+-- FC04 done to 0x9EFF, 45 addr/s
+-- FC04 done to 0x9FFF, 45 addr/s
+-- FC04 done to 0xA0FF, 45 addr/s
+-- FC04 done to 0xA1FF, 45 addr/s
+-- FC04 done to 0xA2FF, 45 addr/s
+-- FC04 done to 0xA3FF, 45 addr/s
+-- FC04 done to 0xA4FF, 45 addr/s
+-- FC04 done to 0xA5FF, 45 addr/s
+-- FC04 done to 0xA6FF, 45 addr/s
+-- FC04 done to 0xA7FF, 45 addr/s
+-- FC04 done to 0xA8FF, 45 addr/s
+-- FC04 done to 0xA9FF, 45 addr/s
+-- FC04 done to 0xAAFF, 45 addr/s
+-- FC04 done to 0xABFF, 45 addr/s
+-- FC04 done to 0xACFF, 45 addr/s
+-- FC04 done to 0xADFF, 45 addr/s
+-- FC04 done to 0xAEFF, 45 addr/s
+-- FC04 done to 0xAFFF, 45 addr/s
+-- FC04 done to 0xB0FF, 45 addr/s
+-- FC04 done to 0xB1FF, 45 addr/s
+-- FC04 done to 0xB2FF, 45 addr/s
+-- FC04 done to 0xB3FF, 45 addr/s
+-- FC04 done to 0xB4FF, 45 addr/s
+-- FC04 done to 0xB5FF, 45 addr/s
+-- FC04 done to 0xB6FF, 45 addr/s
+-- FC04 done to 0xB7FF, 45 addr/s
+-- FC04 done to 0xB8FF, 45 addr/s
+-- FC04 done to 0xB9FF, 45 addr/s
+-- FC04 done to 0xBAFF, 45 addr/s
+-- FC04 done to 0xBBFF, 45 addr/s
+-- FC04 done to 0xBCFF, 45 addr/s
+-- FC04 done to 0xBDFF, 45 addr/s
+-- FC04 done to 0xBEFF, 45 addr/s
+-- FC04 done to 0xBFFF, 45 addr/s
+-- FC04 done to 0xC0FF, 45 addr/s
+-- FC04 done to 0xC1FF, 45 addr/s
+-- FC04 done to 0xC2FF, 45 addr/s
+-- FC04 done to 0xC3FF, 45 addr/s
+-- FC04 done to 0xC4FF, 45 addr/s
+-- FC04 done to 0xC5FF, 45 addr/s
+-- FC04 done to 0xC6FF, 45 addr/s
+-- FC04 done to 0xC7FF, 45 addr/s
+-- FC04 done to 0xC8FF, 45 addr/s
+-- FC04 done to 0xC9FF, 45 addr/s
+-- FC04 done to 0xCAFF, 45 addr/s
+-- FC04 done to 0xCBFF, 45 addr/s
+-- FC04 done to 0xCCFF, 45 addr/s
+-- FC04 done to 0xCDFF, 45 addr/s
+-- FC04 done to 0xCEFF, 45 addr/s
+-- FC04 done to 0xCFFF, 45 addr/s
+-- FC04 done to 0xD0FF, 45 addr/s
+-- FC04 done to 0xD1FF, 45 addr/s
+-- FC04 done to 0xD2FF, 45 addr/s
+-- FC04 done to 0xD3FF, 45 addr/s
+-- FC04 done to 0xD4FF, 45 addr/s
+-- FC04 done to 0xD5FF, 45 addr/s
+-- FC04 done to 0xD6FF, 45 addr/s
+-- FC04 done to 0xD7FF, 45 addr/s
+-- FC04 done to 0xD8FF, 45 addr/s
+-- FC04 done to 0xD9FF, 45 addr/s
+-- FC04 done to 0xDAFF, 45 addr/s
+-- FC04 done to 0xDBFF, 45 addr/s
+-- FC04 done to 0xDCFF, 45 addr/s
+-- FC04 done to 0xDDFF, 45 addr/s
+-- FC04 done to 0xDEFF, 45 addr/s
+-- FC04 done to 0xDFFF, 45 addr/s
+-- FC04 done to 0xE0FF, 45 addr/s
+-- FC04 done to 0xE1FF, 45 addr/s
+-- FC04 done to 0xE2FF, 45 addr/s
+-- FC04 done to 0xE3FF, 45 addr/s
+-- FC04 done to 0xE4FF, 45 addr/s
+-- FC04 done to 0xE5FF, 45 addr/s
+-- FC04 done to 0xE6FF, 45 addr/s
+-- FC04 done to 0xE7FF, 45 addr/s
+-- FC04 done to 0xE8FF, 45 addr/s
+-- FC04 done to 0xE9FF, 45 addr/s
+-- FC04 done to 0xEAFF, 45 addr/s
+-- FC04 done to 0xEBFF, 45 addr/s
+-- FC04 done to 0xECFF, 45 addr/s
+-- FC04 done to 0xEDFF, 45 addr/s
+-- FC04 done to 0xEEFF, 45 addr/s
+-- FC04 done to 0xEFFF, 45 addr/s
+-- FC04 done to 0xF0FF, 45 addr/s
+-- FC04 done to 0xF1FF, 45 addr/s
+-- FC04 done to 0xF2FF, 45 addr/s
+-- FC04 done to 0xF3FF, 45 addr/s
+-- FC04 done to 0xF4FF, 45 addr/s
+-- FC04 done to 0xF5FF, 45 addr/s
+-- FC04 done to 0xF6FF, 45 addr/s
+-- FC04 done to 0xF7FF, 45 addr/s
+-- FC04 done to 0xF8FF, 45 addr/s
+-- FC04 done to 0xF9FF, 45 addr/s
+-- FC04 done to 0xFAFF, 45 addr/s
+-- FC04 done to 0xFBFF, 45 addr/s
+-- FC04 done to 0xFCFF, 45 addr/s
+-- FC04 done to 0xFDFF, 45 addr/s
+-- FC04 done to 0xFEFF, 45 addr/s
+-- FC04 done to 0xFFFF, 45 addr/s
+-- FC03 done to 0x00FF, 45 addr/s
+-- FC03 done to 0x01FF, 45 addr/s
+-- FC03 done to 0x02FF, 45 addr/s
+-- FC03 done to 0x03FF, 45 addr/s
+-- FC03 done to 0x04FF, 45 addr/s
+-- FC03 done to 0x05FF, 45 addr/s
+-- FC03 done to 0x06FF, 45 addr/s
+-- FC03 done to 0x07FF, 45 addr/s
+-- FC03 done to 0x08FF, 45 addr/s
+-- FC03 done to 0x09FF, 45 addr/s
+-- FC03 done to 0x0AFF, 45 addr/s
+-- FC03 done to 0x0BFF, 45 addr/s
+-- FC03 done to 0x0CFF, 45 addr/s
+-- FC03 done to 0x0DFF, 45 addr/s
+-- FC03 done to 0x0EFF, 45 addr/s
+-- FC03 done to 0x0FFF, 45 addr/s
+-- FC03 done to 0x10FF, 45 addr/s
+-- FC03 done to 0x11FF, 45 addr/s
+-- FC03 done to 0x12FF, 45 addr/s
+-- FC03 done to 0x13FF, 45 addr/s
+-- FC03 done to 0x14FF, 45 addr/s
+-- FC03 done to 0x15FF, 45 addr/s
+-- FC03 done to 0x16FF, 45 addr/s
+-- FC03 done to 0x17FF, 45 addr/s
+-- FC03 done to 0x18FF, 45 addr/s
+-- FC03 done to 0x19FF, 45 addr/s
+-- FC03 done to 0x1AFF, 45 addr/s
+-- FC03 done to 0x1BFF, 45 addr/s
+-- FC03 done to 0x1CFF, 45 addr/s
+-- FC03 done to 0x1DFF, 45 addr/s
+-- FC03 done to 0x1EFF, 45 addr/s
+-- FC03 done to 0x1FFF, 45 addr/s
+-- FC03 done to 0x20FF, 45 addr/s
+-- FC03 done to 0x21FF, 45 addr/s
+-- FC03 done to 0x22FF, 45 addr/s
+-- FC03 done to 0x23FF, 45 addr/s
+-- FC03 done to 0x24FF, 45 addr/s
+-- FC03 done to 0x25FF, 45 addr/s
+-- FC03 done to 0x26FF, 45 addr/s
+-- FC03 done to 0x27FF, 45 addr/s
+-- FC03 done to 0x28FF, 45 addr/s
+-- FC03 done to 0x29FF, 45 addr/s
+-- FC03 done to 0x2AFF, 45 addr/s
+-- FC03 done to 0x2BFF, 45 addr/s
+-- FC03 done to 0x2CFF, 45 addr/s
+-- FC03 done to 0x2DFF, 45 addr/s
+-- FC03 done to 0x2EFF, 45 addr/s
+-- FC03 done to 0x2FFF, 45 addr/s
+-- FC03 done to 0x30FF, 45 addr/s
+-- FC03 done to 0x31FF, 45 addr/s
+-- FC03 done to 0x32FF, 45 addr/s
+-- FC03 done to 0x33FF, 45 addr/s
+-- FC03 done to 0x34FF, 45 addr/s
+-- FC03 done to 0x35FF, 45 addr/s
+-- FC03 done to 0x36FF, 45 addr/s
+-- FC03 done to 0x37FF, 45 addr/s
+-- FC03 done to 0x38FF, 45 addr/s
+-- FC03 done to 0x39FF, 45 addr/s
+-- FC03 done to 0x3AFF, 45 addr/s
+-- FC03 done to 0x3BFF, 45 addr/s
+-- FC03 done to 0x3CFF, 45 addr/s
+-- FC03 done to 0x3DFF, 45 addr/s
+-- FC03 done to 0x3EFF, 45 addr/s
+-- FC03 done to 0x3FFF, 45 addr/s
+-- FC03 done to 0x40FF, 45 addr/s
+-- FC03 done to 0x41FF, 45 addr/s
+-- FC03 done to 0x42FF, 45 addr/s
+-- FC03 done to 0x43FF, 45 addr/s
+-- FC03 done to 0x44FF, 45 addr/s
+-- FC03 done to 0x45FF, 45 addr/s
+-- FC03 done to 0x46FF, 45 addr/s
+-- FC03 done to 0x47FF, 45 addr/s
+-- FC03 done to 0x48FF, 45 addr/s
+-- FC03 done to 0x49FF, 45 addr/s
+-- FC03 done to 0x4AFF, 45 addr/s
+-- FC03 done to 0x4BFF, 45 addr/s
+-- FC03 done to 0x4CFF, 45 addr/s
+-- FC03 done to 0x4DFF, 45 addr/s
+-- FC03 done to 0x4EFF, 45 addr/s
+-- FC03 done to 0x4FFF, 45 addr/s
+-- FC03 done to 0x50FF, 45 addr/s
+-- FC03 done to 0x51FF, 45 addr/s
+-- FC03 done to 0x52FF, 45 addr/s
+-- FC03 done to 0x53FF, 45 addr/s
+-- FC03 done to 0x54FF, 45 addr/s
+-- FC03 done to 0x55FF, 45 addr/s
+-- FC03 done to 0x56FF, 45 addr/s
+-- FC03 done to 0x57FF, 45 addr/s
+-- FC03 done to 0x58FF, 45 addr/s
+-- FC03 done to 0x59FF, 45 addr/s
+-- FC03 done to 0x5AFF, 45 addr/s
+-- FC03 done to 0x5BFF, 45 addr/s
+-- FC03 done to 0x5CFF, 45 addr/s
+-- FC03 done to 0x5DFF, 45 addr/s
+-- FC03 done to 0x5EFF, 45 addr/s
+-- FC03 done to 0x5FFF, 45 addr/s
+-- FC03 done to 0x60FF, 45 addr/s
+-- FC03 done to 0x61FF, 45 addr/s
+-- FC03 done to 0x62FF, 45 addr/s
+-- FC03 done to 0x63FF, 45 addr/s
+-- FC03 done to 0x64FF, 45 addr/s
+-- FC03 done to 0x65FF, 45 addr/s
+-- FC03 done to 0x66FF, 45 addr/s
+-- FC03 done to 0x67FF, 45 addr/s
+-- FC03 done to 0x68FF, 45 addr/s
+-- FC03 done to 0x69FF, 45 addr/s
+-- FC03 done to 0x6AFF, 45 addr/s
+-- FC03 done to 0x6BFF, 45 addr/s
+-- FC03 done to 0x6CFF, 45 addr/s
+-- FC03 done to 0x6DFF, 45 addr/s
+-- FC03 done to 0x6EFF, 45 addr/s
+-- FC03 done to 0x6FFF, 45 addr/s
+-- FC03 done to 0x70FF, 45 addr/s
+-- FC03 done to 0x71FF, 45 addr/s
+-- FC03 done to 0x72FF, 45 addr/s
+-- FC03 done to 0x73FF, 45 addr/s
+-- FC03 done to 0x74FF, 45 addr/s
+-- FC03 done to 0x75FF, 45 addr/s
+-- FC03 done to 0x76FF, 45 addr/s
+-- FC03 done to 0x77FF, 45 addr/s
+-- FC03 done to 0x78FF, 45 addr/s
+-- FC03 done to 0x79FF, 45 addr/s
+-- FC03 done to 0x7AFF, 45 addr/s
+-- FC03 done to 0x7BFF, 45 addr/s
+-- FC03 done to 0x7CFF, 45 addr/s
+-- FC03 done to 0x7DFF, 45 addr/s
+-- FC03 done to 0x7EFF, 45 addr/s
+-- FC03 done to 0x7FFF, 45 addr/s
+-- FC03 done to 0x80FF, 45 addr/s
+-- FC03 done to 0x81FF, 45 addr/s
+-- FC03 done to 0x82FF, 45 addr/s
+-- FC03 done to 0x83FF, 45 addr/s
+-- FC03 done to 0x84FF, 45 addr/s
+-- FC03 done to 0x85FF, 45 addr/s
+-- FC03 done to 0x86FF, 45 addr/s
+-- FC03 done to 0x87FF, 45 addr/s
+-- FC03 done to 0x88FF, 45 addr/s
+-- FC03 done to 0x89FF, 45 addr/s
+-- FC03 done to 0x8AFF, 45 addr/s
+-- FC03 done to 0x8BFF, 45 addr/s
+-- FC03 done to 0x8CFF, 45 addr/s
+-- FC03 done to 0x8DFF, 45 addr/s
+-- FC03 done to 0x8EFF, 45 addr/s
+-- FC03 done to 0x8FFF, 45 addr/s
+FC03 0x9000 {'v': 0}
+FC03 0x9001 {'v': 200}
+FC03 0x9002 {'v': 0}
+FC03 0x9003 {'v': 1500}
+FC03 0x9004 {'v': 1460}
+FC03 0x9005 {'v': 1420}
+FC03 0x9006 {'v': 1400}
+FC03 0x9007 {'v': 1400}
+FC03 0x9008 {'v': 1350}
+FC03 0x9009 {'v': 1320}
+FC03 0x900A {'v': 1240}
+FC03 0x900B {'v': 1200}
+FC03 0x900C {'v': 1160}
+FC03 0x900D {'v': 1080}
+FC03 0x900E {'v': 1040}
+FC03 0x9010 {'v': 100}
+FC03 0x9011 {'v': 65036}
+FC03 0x9013 {'v': 10518}
+FC03 0x9014 {'v': 5654}
+FC03 0x9015 {'v': 6666}
+FC03 0x9016 {'v': 30}
+FC03 0x9017 {'v': 6500}
+FC03 0x9018 {'v': 61536}
+FC03 0x9019 {'v': 8500}
+FC03 0x901A {'v': 7500}
+FC03 0x901B {'v': 8500}
+FC03 0x901C {'v': 7500}
+FC03 0x901D {'v': 0}
+FC03 0x901E {'v': 500}
+FC03 0x901F {'v': 10}
+FC03 0x9020 {'v': 600}
+FC03 0x9021 {'v': 10}
+FC03 0x903D {'v': 0}
+FC03 0x903E {'v': 256}
+FC03 0x903F {'v': 256}
+FC03 0x9042 {'v': 0}
+FC03 0x9043 {'v': 0}
+FC03 0x9044 {'v': 19}
+FC03 0x9045 {'v': 0}
+FC03 0x9046 {'v': 0}
+FC03 0x9047 {'v': 6}
+FC03 0x9048 {'v': 0}
+FC03 0x9049 {'v': 0}
+FC03 0x904A {'v': 19}
+FC03 0x904B {'v': 0}
+FC03 0x904C {'v': 0}
+FC03 0x904D {'v': 6}
+FC03 0x9063 {'v': 30}
+FC03 0x9064 {'v': 5}
+FC03 0x9065 {'v': 3593}
+FC03 0x9067 {'v': 1}
+FC03 0x9069 {'v': 0}
+FC03 0x906A {'v': 1}
+FC03 0x906B {'v': 180}
+FC03 0x906C {'v': 180}
+FC03 0x906D {'v': 30}
+FC03 0x906E {'v': 100}
+FC03 0x906F {'v': 40}
+FC03 0x9070 {'v': 0}
+FC03 0x9090 {'v': 0}
+FC03 0x9091 {'v': 0}
+FC03 0x9092 {'v': 129}
+FC03 0x9093 {'v': 0}
+FC03 0x9094 {'v': 1295}
+FC03 0x9095 {'v': 65417}
+FC03 0x9096 {'v': 65535}
+FC03 0x9097 {'v': 2204}
+FC03 0x9098 {'v': 2204}
+FC03 0x90A0 {'v': 0}
+FC03 0x90A1 {'v': 0}
+FC03 0x90A2 {'v': 0}
+FC03 0x90A3 {'v': 0}
+FC03 0x90A4 {'v': 0}
+FC03 0x90BF {'v': 1000}
+-- FC03 done to 0x90FF, 45 addr/s
+FC03 0x9100 {'v': 12336}
+FC03 0x9101 {'v': 12336}
+FC03 0x9102 {'v': 12336}
+FC03 0x9103 {'v': 12337}
+FC03 0x9104 {'v': 12850}
+FC03 0x9105 {'v': 13872}
+FC03 0x9106 {'v': 0}
+FC03 0x9107 {'v': 768}
+FC03 0x9180 {'v': 0}
+FC03 0x9181 {'v': 0}
+FC03 0x9183 {'v': 0}
+-- FC03 done to 0x91FF, 45 addr/s
+-- FC03 done to 0x92FF, 45 addr/s
+-- FC03 done to 0x93FF, 45 addr/s
+-- FC03 done to 0x94FF, 45 addr/s
+-- FC03 done to 0x95FF, 45 addr/s
+-- FC03 done to 0x96FF, 45 addr/s
+-- FC03 done to 0x97FF, 45 addr/s
+-- FC03 done to 0x98FF, 45 addr/s
+-- FC03 done to 0x99FF, 45 addr/s
+-- FC03 done to 0x9AFF, 45 addr/s
+-- FC03 done to 0x9BFF, 45 addr/s
+-- FC03 done to 0x9CFF, 45 addr/s
+-- FC03 done to 0x9DFF, 45 addr/s
+-- FC03 done to 0x9EFF, 45 addr/s
+-- FC03 done to 0x9FFF, 45 addr/s
+-- FC03 done to 0xA0FF, 45 addr/s
+-- FC03 done to 0xA1FF, 45 addr/s
+-- FC03 done to 0xA2FF, 45 addr/s
+-- FC03 done to 0xA3FF, 45 addr/s
+-- FC03 done to 0xA4FF, 45 addr/s
+-- FC03 done to 0xA5FF, 45 addr/s
+-- FC03 done to 0xA6FF, 45 addr/s
+-- FC03 done to 0xA7FF, 45 addr/s
+-- FC03 done to 0xA8FF, 45 addr/s
+-- FC03 done to 0xA9FF, 45 addr/s
+-- FC03 done to 0xAAFF, 45 addr/s
+-- FC03 done to 0xABFF, 45 addr/s
+-- FC03 done to 0xACFF, 45 addr/s
+-- FC03 done to 0xADFF, 45 addr/s
+-- FC03 done to 0xAEFF, 45 addr/s
+-- FC03 done to 0xAFFF, 45 addr/s
+-- FC03 done to 0xB0FF, 45 addr/s
+-- FC03 done to 0xB1FF, 45 addr/s
+-- FC03 done to 0xB2FF, 45 addr/s
+-- FC03 done to 0xB3FF, 45 addr/s
+-- FC03 done to 0xB4FF, 45 addr/s
+-- FC03 done to 0xB5FF, 45 addr/s
+-- FC03 done to 0xB6FF, 45 addr/s
+-- FC03 done to 0xB7FF, 45 addr/s
+-- FC03 done to 0xB8FF, 45 addr/s
+-- FC03 done to 0xB9FF, 45 addr/s
+-- FC03 done to 0xBAFF, 45 addr/s
+-- FC03 done to 0xBBFF, 45 addr/s
+-- FC03 done to 0xBCFF, 45 addr/s
+-- FC03 done to 0xBDFF, 45 addr/s
+-- FC03 done to 0xBEFF, 45 addr/s
+-- FC03 done to 0xBFFF, 45 addr/s
+-- FC03 done to 0xC0FF, 45 addr/s
+-- FC03 done to 0xC1FF, 45 addr/s
+-- FC03 done to 0xC2FF, 45 addr/s
+-- FC03 done to 0xC3FF, 45 addr/s
+-- FC03 done to 0xC4FF, 45 addr/s
+-- FC03 done to 0xC5FF, 45 addr/s
+-- FC03 done to 0xC6FF, 45 addr/s
+-- FC03 done to 0xC7FF, 45 addr/s
+-- FC03 done to 0xC8FF, 45 addr/s
+-- FC03 done to 0xC9FF, 45 addr/s
+-- FC03 done to 0xCAFF, 45 addr/s
+-- FC03 done to 0xCBFF, 45 addr/s
+-- FC03 done to 0xCCFF, 45 addr/s
+-- FC03 done to 0xCDFF, 45 addr/s
+-- FC03 done to 0xCEFF, 45 addr/s
+-- FC03 done to 0xCFFF, 45 addr/s
+-- FC03 done to 0xD0FF, 45 addr/s
+-- FC03 done to 0xD1FF, 45 addr/s
+-- FC03 done to 0xD2FF, 45 addr/s
+-- FC03 done to 0xD3FF, 45 addr/s
+-- FC03 done to 0xD4FF, 45 addr/s
+-- FC03 done to 0xD5FF, 45 addr/s
+-- FC03 done to 0xD6FF, 45 addr/s
+-- FC03 done to 0xD7FF, 45 addr/s
+-- FC03 done to 0xD8FF, 45 addr/s
+-- FC03 done to 0xD9FF, 45 addr/s
+-- FC03 done to 0xDAFF, 45 addr/s
+-- FC03 done to 0xDBFF, 45 addr/s
+-- FC03 done to 0xDCFF, 45 addr/s
+-- FC03 done to 0xDDFF, 45 addr/s
+-- FC03 done to 0xDEFF, 45 addr/s
+-- FC03 done to 0xDFFF, 45 addr/s
+-- FC03 done to 0xE0FF, 45 addr/s
+-- FC03 done to 0xE1FF, 45 addr/s
+-- FC03 done to 0xE2FF, 45 addr/s
+-- FC03 done to 0xE3FF, 45 addr/s
+-- FC03 done to 0xE4FF, 45 addr/s
+-- FC03 done to 0xE5FF, 45 addr/s
+-- FC03 done to 0xE6FF, 45 addr/s
+-- FC03 done to 0xE7FF, 45 addr/s
+-- FC03 done to 0xE8FF, 45 addr/s
+-- FC03 done to 0xE9FF, 45 addr/s
+-- FC03 done to 0xEAFF, 45 addr/s
+-- FC03 done to 0xEBFF, 45 addr/s
+-- FC03 done to 0xECFF, 45 addr/s
+-- FC03 done to 0xEDFF, 45 addr/s
+-- FC03 done to 0xEEFF, 45 addr/s
+-- FC03 done to 0xEFFF, 45 addr/s
+-- FC03 done to 0xF0FF, 45 addr/s
+-- FC03 done to 0xF1FF, 45 addr/s
+-- FC03 done to 0xF2FF, 45 addr/s
+-- FC03 done to 0xF3FF, 45 addr/s
+-- FC03 done to 0xF4FF, 45 addr/s
+-- FC03 done to 0xF5FF, 45 addr/s
+-- FC03 done to 0xF6FF, 45 addr/s
+-- FC03 done to 0xF7FF, 45 addr/s
+-- FC03 done to 0xF8FF, 45 addr/s
+-- FC03 done to 0xF9FF, 45 addr/s
+-- FC03 done to 0xFAFF, 45 addr/s
+-- FC03 done to 0xFBFF, 45 addr/s
+-- FC03 done to 0xFCFF, 45 addr/s
+-- FC03 done to 0xFDFF, 45 addr/s
+-- FC03 done to 0xFEFF, 45 addr/s
+-- FC03 done to 0xFFFF, 45 addr/s
+
+FC03: 85 responsive addresses
+  0x9000–0x900E (  15) values
+  0x9010–0x9011 (   2) values
+  0x9013–0x9021 (  15) values
+  0x903D–0x903F (   3) values
+  0x9042–0x904D (  12) values
+  0x9063–0x9065 (   3) values
+  0x9067–0x9067 (   1) values
+  0x9069–0x9070 (   8) values
+  0x9090–0x9098 (   9) values
+  0x90A0–0x90A4 (   5) values
+  0x90BF–0x90BF (   1) values
+  0x9100–0x9107 (   8) values
+  0x9180–0x9181 (   2) values
+  0x9183–0x9183 (   1) values
+
+FC04: 128 responsive addresses
+  0x3000–0x3008 (   9) values
+  0x300E–0x300E (   1) values
+  0x3011–0x3011 (   1) values
+  0x3100–0x3113 (  20) values
+  0x311A–0x311B (   2) values
+  0x311D–0x311D (   1) values
+  0x3170–0x3195 (  38) values
+  0x31A0–0x31AB (  12) values
+  0x31AD–0x31B6 (  10) values
+  0x3200–0x3202 (   3) values
+  0x3300–0x331E (  31) values
+-- FC02 done to 0x00FF, 45 addr/s
+-- FC02 done to 0x01FF, 45 addr/s
+-- FC02 done to 0x02FF, 45 addr/s
+-- FC02 done to 0x03FF, 45 addr/s
+-- FC02 done to 0x04FF, 45 addr/s
+-- FC02 done to 0x05FF, 45 addr/s
+-- FC02 done to 0x06FF, 45 addr/s
+-- FC02 done to 0x07FF, 45 addr/s
+-- FC02 done to 0x08FF, 45 addr/s
+-- FC02 done to 0x09FF, 45 addr/s
+-- FC02 done to 0x0AFF, 45 addr/s
+-- FC02 done to 0x0BFF, 45 addr/s
+-- FC02 done to 0x0CFF, 45 addr/s
+-- FC02 done to 0x0DFF, 45 addr/s
+-- FC02 done to 0x0EFF, 45 addr/s
+-- FC02 done to 0x0FFF, 45 addr/s
+-- FC02 done to 0x10FF, 45 addr/s
+-- FC02 done to 0x11FF, 45 addr/s
+-- FC02 done to 0x12FF, 45 addr/s
+-- FC02 done to 0x13FF, 45 addr/s
+-- FC02 done to 0x14FF, 45 addr/s
+-- FC02 done to 0x15FF, 45 addr/s
+-- FC02 done to 0x16FF, 45 addr/s
+-- FC02 done to 0x17FF, 45 addr/s
+-- FC02 done to 0x18FF, 45 addr/s
+-- FC02 done to 0x19FF, 45 addr/s
+-- FC02 done to 0x1AFF, 45 addr/s
+-- FC02 done to 0x1BFF, 45 addr/s
+-- FC02 done to 0x1CFF, 45 addr/s
+-- FC02 done to 0x1DFF, 45 addr/s
+-- FC02 done to 0x1EFF, 45 addr/s
+-- FC02 done to 0x1FFF, 45 addr/s
+FC02 0x2000 {'v': 0}
+FC02 0x2001 {'v': 0}
+FC02 0x2009 {'v': 0}
+FC02 0x200C {'v': 1}
+-- FC02 done to 0x20FF, 45 addr/s
+-- FC02 done to 0x21FF, 45 addr/s
+-- FC02 done to 0x22FF, 45 addr/s
+-- FC02 done to 0x23FF, 45 addr/s
+-- FC02 done to 0x24FF, 45 addr/s
+-- FC02 done to 0x25FF, 45 addr/s
+-- FC02 done to 0x26FF, 45 addr/s
+-- FC02 done to 0x27FF, 45 addr/s
+-- FC02 done to 0x28FF, 45 addr/s
+-- FC02 done to 0x29FF, 45 addr/s
+-- FC02 done to 0x2AFF, 45 addr/s
+-- FC02 done to 0x2BFF, 45 addr/s
+-- FC02 done to 0x2CFF, 45 addr/s
+-- FC02 done to 0x2DFF, 45 addr/s
+-- FC02 done to 0x2EFF, 45 addr/s
+-- FC02 done to 0x2FFF, 45 addr/s
+FC01 0x0000 {'v': 0}
+FC01 0x0002 {'v': 1}
+FC01 0x0003 {'v': 0}
+FC01 0x0004 {'v': 0}
+FC01 0x0005 {'v': 0}
+FC01 0x0006 {'v': 0}
+FC01 0x0013 {'v': 0}
+FC01 0x0014 {'v': 0}
+FC01 0x0016 {'v': 0}
+FC01 0x0020 {'v': 0}
+-- FC01 done to 0x00FF, 45 addr/s
+-- FC01 done to 0x01FF, 45 addr/s
+-- FC01 done to 0x02FF, 45 addr/s
+-- FC01 done to 0x03FF, 45 addr/s
+-- FC01 done to 0x04FF, 45 addr/s
+-- FC01 done to 0x05FF, 45 addr/s
+-- FC01 done to 0x06FF, 45 addr/s
+-- FC01 done to 0x07FF, 45 addr/s
+-- FC01 done to 0x08FF, 45 addr/s
+-- FC01 done to 0x09FF, 45 addr/s
+-- FC01 done to 0x0AFF, 45 addr/s
+-- FC01 done to 0x0BFF, 45 addr/s
+-- FC01 done to 0x0CFF, 45 addr/s
+-- FC01 done to 0x0DFF, 45 addr/s
+-- FC01 done to 0x0EFF, 45 addr/s
+-- FC01 done to 0x0FFF, 45 addr/s
+-- FC01 done to 0x10FF, 45 addr/s
+-- FC01 done to 0x11FF, 45 addr/s
+-- FC01 done to 0x12FF, 45 addr/s
+-- FC01 done to 0x13FF, 45 addr/s
+-- FC01 done to 0x14FF, 45 addr/s
+-- FC01 done to 0x15FF, 45 addr/s
+-- FC01 done to 0x16FF, 45 addr/s
+-- FC01 done to 0x17FF, 45 addr/s
+-- FC01 done to 0x18FF, 45 addr/s
+-- FC01 done to 0x19FF, 45 addr/s
+-- FC01 done to 0x1AFF, 45 addr/s
+-- FC01 done to 0x1BFF, 45 addr/s
+-- FC01 done to 0x1CFF, 45 addr/s
+-- FC01 done to 0x1DFF, 45 addr/s
+-- FC01 done to 0x1EFF, 45 addr/s
+-- FC01 done to 0x1FFF, 45 addr/s
+-- FC01 done to 0x20FF, 45 addr/s
+-- FC01 done to 0x21FF, 45 addr/s
+-- FC01 done to 0x22FF, 45 addr/s
+-- FC01 done to 0x23FF, 45 addr/s
+-- FC01 done to 0x24FF, 45 addr/s
+-- FC01 done to 0x25FF, 45 addr/s
+-- FC01 done to 0x26FF, 45 addr/s
+-- FC01 done to 0x27FF, 45 addr/s
+-- FC01 done to 0x28FF, 45 addr/s
+-- FC01 done to 0x29FF, 45 addr/s
+-- FC01 done to 0x2AFF, 45 addr/s
+-- FC01 done to 0x2BFF, 45 addr/s
+-- FC01 done to 0x2CFF, 45 addr/s
+-- FC01 done to 0x2DFF, 45 addr/s
+-- FC01 done to 0x2EFF, 45 addr/s
+-- FC01 done to 0x2FFF, 45 addr/s
+
+FC01: 10 responsive addresses
+  0x0000–0x0000 (   1) values
+  0x0002–0x0006 (   5) values
+  0x0013–0x0014 (   2) values
+  0x0016–0x0016 (   1) values
+  0x0020–0x0020 (   1) values
+
+FC02: 4 responsive addresses
+  0x2000–0x2001 (   2) values
+  0x2009–0x2009 (   1) values
+  0x200C–0x200C (   1) values
+
+FC03: 85 responsive addresses
+  0x9000–0x900E (  15) values
+  0x9010–0x9011 (   2) values
+  0x9013–0x9021 (  15) values
+  0x903D–0x903F (   3) values
+  0x9042–0x904D (  12) values
+  0x9063–0x9065 (   3) values
+  0x9067–0x9067 (   1) values
+  0x9069–0x9070 (   8) values
+  0x9090–0x9098 (   9) values
+  0x90A0–0x90A4 (   5) values
+  0x90BF–0x90BF (   1) values
+  0x9100–0x9107 (   8) values
+  0x9180–0x9181 (   2) values
+  0x9183–0x9183 (   1) values
+
+FC04: 128 responsive addresses
+  0x3000–0x3008 (   9) values
+  0x300E–0x300E (   1) values
+  0x3011–0x3011 (   1) values
+  0x3100–0x3113 (  20) values
+  0x311A–0x311B (   2) values
+  0x311D–0x311D (   1) values
+  0x3170–0x3195 (  38) values
+  0x31A0–0x31AB (  12) values
+  0x31AD–0x31B6 (  10) values
+  0x3200–0x3202 (   3) values
+  0x3300–0x331E (  31) values

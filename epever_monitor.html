@@ -1,0 +1,1594 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EPEver Monitor</title>
+<meta name="description" content="Live readings, history and statistics from an EPEver Tracer solar charge controller over Web Serial. Read only, apart from the solar-charging switch.">
+<link rel="preload" href="fonts/chivo-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: Wayfind (deal 1/3, seed live-dashboard-van-solar-80dc·7a375cd1·2026-11-10·r0) · redesign: full
+ * nav: top bar, kept · signature: the live plate, battery volts in amber on ink · states: not connected, connecting, live, read failed, charging off, empty tables · wayfind: platform by day, night in dark mode
+ * axes: light/mono/cool · posture: committed · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R3 V4 · weakest: R, nine stacked cards read as one weight; the live plate now leads, long notes and the settings fold away */
+/* Hallmark · waive 64 · the theme sets every glyph in Chivo Mono · mono is the material, not a label reflex */
+/* Hallmark · answered F4 · "Solar charging" is .secondary (outlined); Connect and Disconnect never show together */
+/* Chivo Mono (SIL OFL 1.1), variable weight, saved next to the page so it works offline */
+@font-face { font-family: "Chivo Mono"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/chivo-mono-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Chivo Mono"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/chivo-mono-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+:root {
+  color-scheme: light;
+  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px;
+  --text-xs: 0.75rem; --text-sm: 0.875rem; --text-md: 1rem; --text-lg: 1.2rem; --text-xl: 1.44rem; --text-2xl: 1.728rem;
+  --container: 1440px; --gutter: 40px; --block-gap: 56px;
+  --font-body: "Chivo Mono", ui-monospace, "DejaVu Sans Mono", monospace;
+  --rule-hair: 1px; --rule-bar: 2px;
+  --shadow-card: 0 24px 40px -24px oklch(8% 0.01 260 / 0.6);
+  --tracking-display: -0.03em;
+  --dur-short: 220ms; --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --color-paper: oklch(95.5% 0.006 250); --color-paper-2: oklch(91% 0.009 250); --color-paper-3: oklch(99.5% 0.005 250);
+  --color-ink: oklch(16% 0.014 262); --color-ink-2: oklch(29% 0.014 262); --color-muted: oklch(47% 0.016 260);
+  --color-rule: oklch(80% 0.011 250);
+  --color-accent: oklch(45% 0.22 264); --color-accent-hover: oklch(39% 0.2 264); --color-accent-ink: oklch(99.5% 0.003 250);
+  --color-focus: oklch(51% 0.22 264);
+  --color-amber: oklch(81% 0.16 82); --color-on-amber: oklch(16% 0.014 262);
+  --color-error: oklch(52% 0.19 27);
+  --color-plate: oklch(16% 0.014 262); --color-plate-edge: oklch(16% 0.014 262); --color-plate-rule: oklch(30% 0.014 262);
+  --color-plate-ink: oklch(95.5% 0.006 250); --color-plate-muted: oklch(74% 0.012 255);
+  --color-grid: oklch(87% 0.008 250); --color-axis: oklch(62% 0.012 255);
+  --series-v: oklch(51% 0.22 264); --series-a: oklch(60% 0.15 62);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-paper: oklch(15% 0.012 262); --color-paper-2: oklch(21% 0.013 262); --color-paper-3: oklch(18% 0.013 262);
+    --color-ink: oklch(96% 0.005 250); --color-ink-2: oklch(84% 0.008 250); --color-muted: oklch(70% 0.012 255);
+    --color-rule: oklch(31% 0.014 262);
+    --color-accent: oklch(66% 0.18 264); --color-accent-hover: oklch(72% 0.16 264); --color-accent-ink: oklch(13% 0.012 262);
+    --color-focus: oklch(72% 0.16 264);
+    --color-error: oklch(70% 0.16 27);
+    --color-plate: oklch(10.5% 0.012 262); --color-plate-edge: oklch(31% 0.014 262); --color-plate-rule: oklch(25% 0.014 262);
+    --color-plate-ink: oklch(96% 0.005 250); --color-plate-muted: oklch(70% 0.012 255);
+    --color-grid: oklch(24% 0.013 262); --color-axis: oklch(46% 0.014 260);
+    --series-v: oklch(66% 0.18 264); --series-a: oklch(80% 0.15 75);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: oklch(15% 0.012 262); --color-paper-2: oklch(21% 0.013 262); --color-paper-3: oklch(18% 0.013 262);
+  --color-ink: oklch(96% 0.005 250); --color-ink-2: oklch(84% 0.008 250); --color-muted: oklch(70% 0.012 255);
+  --color-rule: oklch(31% 0.014 262);
+  --color-accent: oklch(66% 0.18 264); --color-accent-hover: oklch(72% 0.16 264); --color-accent-ink: oklch(13% 0.012 262);
+  --color-focus: oklch(72% 0.16 264);
+  --color-error: oklch(70% 0.16 27);
+  --color-plate: oklch(10.5% 0.012 262); --color-plate-edge: oklch(31% 0.014 262); --color-plate-rule: oklch(25% 0.014 262);
+  --color-plate-ink: oklch(96% 0.005 250); --color-plate-muted: oklch(70% 0.012 255);
+  --color-grid: oklch(24% 0.013 262); --color-axis: oklch(46% 0.014 260);
+  --series-v: oklch(66% 0.18 264); --series-a: oklch(80% 0.15 75);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { overflow-x: clip; }
+html { scrollbar-color: var(--color-muted) var(--color-paper); }
+body {
+  margin: 0; background: var(--color-paper); color: var(--color-ink);
+  font: 400 var(--text-md)/1.55 var(--font-body); font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased; caret-color: var(--color-accent);
+}
+::selection { background: var(--color-amber); color: var(--color-on-amber); }
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+[hidden] { display: none !important; }
+p { margin: 0; text-wrap: pretty; }
+h1, h2 { margin: 0; font-weight: 800; letter-spacing: var(--tracking-display); line-height: 1.05; overflow-wrap: break-word; min-width: 0; text-wrap: balance; }
+h1 { font-size: var(--text-lg); }
+h2 { font-size: var(--text-lg); }
+.container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+
+/* top bar; once the live plate scrolls away, the title gives its place to a small plate of the same figures */
+.brand { display: grid; align-items: center; margin-right: auto; }
+.brand > * { grid-area: 1 / 1; transition: opacity var(--dur-short) var(--ease-out), transform var(--dur-short) var(--ease-out); }
+.mini { display: none; gap: var(--rule-hair); width: max-content; background: var(--color-plate-rule); border: var(--rule-bar) solid var(--color-plate-edge); pointer-events: none; }
+.mini span { padding: var(--space-2xs) var(--space-xs); background: var(--color-plate); color: var(--color-amber); font-size: var(--text-sm); font-weight: 800; white-space: nowrap;
+  transition: opacity var(--dur-short) var(--ease-out), transform var(--dur-short) var(--ease-out); }
+.mini span:nth-child(2) { transition-delay: 40ms; } .mini span:nth-child(3) { transition-delay: 80ms; } .mini span:nth-child(4) { transition-delay: 120ms; }
+.mini small { margin-left: var(--space-3xs); font-weight: 500; color: var(--color-plate-muted); }
+@media (min-width: 60rem) { .mini span { padding: var(--space-2xs) var(--space-sm); font-size: var(--text-xl); line-height: 1.25; letter-spacing: var(--tracking-display); } .mini small { font-size: var(--text-sm); letter-spacing: 0; } }
+.js .mini { display: flex; visibility: hidden; transition: opacity var(--dur-short) var(--ease-out), visibility 0s linear 300ms; }
+.js .bar:not(.stuck) .mini { opacity: 0; }
+.js .bar:not(.stuck) .mini span { opacity: 0; transform: translateY(10px); }
+.js .bar.stuck .mini { visibility: visible; transition-delay: 0s; }
+.js .bar.stuck h1 { opacity: 0; transform: translateY(-10px); }
+.bar { position: sticky; top: 0; z-index: 300; background: var(--color-paper); border-bottom: var(--rule-bar) solid var(--color-ink); }
+.bar-in { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-sm) var(--space-md); min-height: 64px; padding-block: var(--space-sm); }
+.status { color: var(--color-ink-2); font-size: var(--text-sm); }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--color-muted); margin-right: var(--space-xs); vertical-align: 1px; }
+.dot.on { background: var(--color-accent); }
+
+/* controls: square, 2px borders, one cobalt primary */
+button {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-xs);
+  min-height: 40px; padding: 0 var(--space-md); border-radius: 0; cursor: pointer;
+  font: 800 var(--text-sm)/1.2 var(--font-body);
+  background: var(--color-accent); color: var(--color-accent-ink); border: var(--rule-bar) solid var(--color-accent);
+}
+button:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+button.secondary { background: transparent; color: var(--color-ink); border-color: var(--color-ink); }
+button.secondary:hover { background: var(--color-paper-2); }
+button:active { transform: translateY(1px); }
+button:disabled, button:disabled:hover { opacity: 0.55; cursor: not-allowed; transform: none; background: transparent; }
+button:not(.secondary):disabled { background: var(--color-accent); }
+button.off, button.off:hover { background: var(--color-amber); color: var(--color-on-amber); border-color: var(--color-amber); }
+
+.seg { display: flex; }
+.seg button { min-height: 32px; padding: 0 var(--space-sm); font-weight: 500; }
+.seg button + button { margin-left: calc(-1 * var(--rule-bar)); }
+.seg button[aria-pressed="true"], .seg button[aria-pressed="true"]:hover { background: var(--color-ink); color: var(--color-paper); }
+
+/* messages: a sign, not a toast */
+#messages:not(:empty) { display: grid; gap: var(--space-sm); margin-top: var(--space-lg); }
+.msg { padding: var(--space-sm) var(--space-md); white-space: pre-line; border: var(--rule-bar) solid; font-size: var(--text-sm); }
+.msg.warn { background: var(--color-amber); color: var(--color-on-amber); border-color: var(--color-amber); }
+.msg.err { background: var(--color-paper-3); color: var(--color-ink); border-color: var(--color-error); }
+.msg.info { background: var(--color-paper-3); color: var(--color-ink); border-color: var(--color-accent); }
+
+/* the live plate */
+.now {
+  display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1.35fr) repeat(3, minmax(0, 1fr));
+  gap: var(--rule-hair); margin-top: var(--space-lg);
+  background: var(--color-plate-rule); border: var(--rule-bar) solid var(--color-plate-edge);
+}
+.tile { background: var(--color-plate); color: var(--color-plate-ink); padding: var(--space-md) var(--space-lg) var(--space-lg); min-width: 0; }
+.tile .k { font-size: var(--text-sm); font-weight: 500; color: var(--color-plate-muted); }
+.tile .v { margin: var(--space-sm) 0 var(--space-xs); font-size: var(--text-2xl); font-weight: 800; line-height: 1; letter-spacing: var(--tracking-display); color: var(--color-amber); white-space: nowrap; }
+.tile .v small { margin-left: var(--space-2xs); font-size: var(--text-md); font-weight: 500; letter-spacing: 0; color: var(--color-plate-muted); }
+.tile-lead .v { font-size: clamp(2.5rem, 2rem + 2vw, 3.75rem); }
+.tile-lead .v small { font-size: var(--text-lg); }
+.tile .d { font-size: var(--text-sm); color: var(--color-plate-ink); opacity: 0.86; }
+
+/* blocks: a 2px ink rule over each, no boxes */
+.block { margin-top: var(--block-gap); padding-top: var(--space-md); border-top: var(--rule-bar) solid var(--color-ink); }
+.cardhead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-sm); margin-bottom: var(--space-md); }
+.cardhead > div:first-child { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-sm); }
+.tag { font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); }
+
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); column-gap: var(--space-xl); }
+.kv div { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-md); padding: var(--space-xs) 0; border-bottom: var(--rule-hair) solid var(--color-rule); }
+.kv span:first-child { color: var(--color-muted); font-size: var(--text-sm); font-weight: 500; }
+.kv span:last-child { text-align: right; font-weight: 500; }
+
+.chartwrap { position: relative; }
+canvas { display: block; width: 100%; height: 360px; touch-action: none; }
+.tip {
+  position: absolute; z-index: 600; display: none; pointer-events: none; white-space: nowrap;
+  padding: var(--space-xs) var(--space-sm); font-size: var(--text-sm);
+  background: var(--color-paper-3); color: var(--color-ink); border: var(--rule-bar) solid var(--color-ink); box-shadow: var(--shadow-card);
+}
+.tip .row { display: flex; align-items: center; gap: var(--space-xs); }
+.tip .key { width: 12px; height: 2px; }
+.tip b { font-weight: 800; }
+
+.scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+th, td { padding: var(--space-xs) var(--space-xs) var(--space-xs) var(--space-sm); text-align: right; white-space: nowrap; }
+th { font-weight: 500; color: var(--color-muted); border-bottom: var(--rule-bar) solid var(--color-ink); }
+td { border-bottom: var(--rule-hair) solid var(--color-rule); }
+th:first-child, td:first-child { text-align: left; padding-left: 0; position: sticky; left: 0; background: var(--color-paper); font-weight: 500; }
+th:last-child, td:last-child { padding-right: 0; }
+td.na { color: var(--color-muted); }
+
+.row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-sm) var(--space-md); margin-top: var(--space-md); }
+.note { margin-top: var(--space-xs); color: var(--color-ink-2); font-size: var(--text-sm); }
+#cycle-count { margin-top: var(--space-md); font-weight: 500; }
+
+details.about { margin-top: var(--space-sm); }
+details.about summary, .settings summary { cursor: pointer; width: fit-content; }
+details.about summary { font-size: var(--text-sm); font-weight: 500; color: var(--color-muted); padding: var(--space-2xs) 0; }
+details.about summary:hover, .settings summary:hover h2 { text-decoration: underline; text-underline-offset: 0.2em; }
+.settings summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-sm); list-style: none; }
+.settings summary::-webkit-details-marker { display: none; }
+.settings summary h2::after { content: " +"; color: var(--color-muted); }
+.settings[open] summary h2::after { content: " −"; }
+.settings[open] summary { margin-bottom: var(--space-md); }
+
+.foot { margin-top: var(--block-gap); padding-block: var(--space-md) var(--space-2xl); border-top: var(--rule-bar) solid var(--color-ink); }
+.foot .row-actions { margin-top: 0; }
+
+@media (max-width: 60rem) {
+  :root { --gutter: 24px; --block-gap: 48px; }
+  .now { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .now .tile:last-child { grid-column: 1 / -1; }
+  canvas { height: 320px; }
+}
+@media (max-width: 40rem) {
+  :root { --gutter: 16px; --block-gap: 40px; }
+  .tile { padding: var(--space-sm) var(--space-md) var(--space-md); }
+  .tile-lead .v { font-size: 2.25rem; }
+  .tile .v { font-size: var(--text-xl); }
+  canvas { height: 300px; }
+  button { min-height: 44px; }
+  .mini span:nth-child(n+3) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { button:active, .js .bar .mini span, .js .bar.stuck h1 { transform: none; } .brand > *, .mini span { transition: none; } }
+</style>
+</head>
+<body>
+<header class="bar" id="bar">
+  <div class="container bar-in">
+    <div class="brand"><h1>EPEver Monitor</h1>
+      <div class="mini" aria-hidden="true"><span id="m-v">--</span><span id="m-a">--</span><span id="m-pv">--</span><span id="m-load">--</span></div>
+    </div>
+    <span class="status" id="status"><span class="dot" id="dot"></span>Not connected</span>
+    <button type="button" id="charging" class="secondary" hidden>Solar charging: ON</button>
+    <button type="button" id="connect">Connect</button>
+    <button type="button" id="disconnect" class="secondary" hidden>Disconnect</button>
+  </div>
+</header>
+
+<main class="container">
+  <div id="messages"></div>
+
+  <section class="now" id="tiles" aria-label="Live readings">
+    <div class="tile tile-lead"><div class="k">Battery</div><div class="v" id="t-vbat">--</div><div class="d" id="t-stage">--</div></div>
+    <div class="tile tile-lead"><div class="k">Net battery current</div><div class="v" id="t-net">--</div><div class="d" id="t-netd">+ charging, − discharging</div></div>
+    <div class="tile"><div class="k">Solar</div><div class="v" id="t-pv">--</div><div class="d" id="t-pvd">--</div></div>
+    <div class="tile"><div class="k">Load output</div><div class="v" id="t-load">--</div><div class="d" id="t-loadd">--</div></div>
+    <div class="tile"><div class="k">Since last full charge</div><div class="v" id="t-ah">--</div><div class="d" id="t-ahd">--</div></div>
+  </section>
+
+  <section class="block">
+    <div class="cardhead">
+      <h2>History</h2>
+      <div class="seg" id="ranges" role="group" aria-label="Chart range">
+        <button type="button" class="secondary" data-h="1">1 h</button><button type="button" class="secondary" data-h="6">6 h</button><button type="button" class="secondary" data-h="24">24 h</button>
+      </div>
+    </div>
+    <div class="chartwrap">
+      <canvas id="chart" aria-label="Battery voltage and net battery current, last 1 h" role="img"></canvas>
+      <div class="tip" id="tip"></div>
+    </div>
+    <details class="about"><summary>How the chart is drawn</summary>
+      <p class="note">1 h: every reading (about 3 a second; stored in epever.db when the page runs from epever_monitor.sh), one-minute averages where none. 6 h and 24 h: one-minute averages. Gaps are times the page wasn’t logging.</p>
+    </details>
+  </section>
+
+  <section class="block">
+    <div class="cardhead">
+      <div><h2>Controller counters</h2><span class="tag" id="today-note" title="These counters reset at the controller's own midnight">controller clock</span></div>
+    </div>
+    <div class="kv" id="today"></div>
+  </section>
+
+  <section class="block">
+    <div class="cardhead"><h2>Daily log</h2></div>
+    <div class="scroll"><table id="days"></table></div>
+    <details class="about"><summary>How it’s counted</summary>
+      <p class="note">Ah in/out = net battery current integrated (into / out of the battery), as the controller sees it: loads wired straight to the battery (inverter, heater) are not counted. Solar and load Ah = their power integrated, divided by each minute’s battery voltage. Times are the minute the extreme happened (laptop clock). “Logged” = how much of the day this page was recording; totals cover only that time.</p>
+    </details>
+  </section>
+
+  <section class="block" id="stats-card" hidden>
+    <div class="cardhead">
+      <h2>Statistics</h2>
+      <div class="seg" id="stats-by" role="group" aria-label="Statistics period">
+        <button type="button" class="secondary" data-by="day">Day</button><button type="button" class="secondary" data-by="week">Week</button><button type="button" class="secondary" data-by="month">Month</button>
+      </div>
+    </div>
+    <div class="scroll"><table id="stats"></table></div>
+    <details class="about"><summary>How it’s counted</summary>
+      <p class="note">All history in epever.db. Totals cover the time the page was logging (“Logged”); “While off” is what the controller’s lifetime counters gained in the gaps (10 Wh steps). Lowest / highest are single readings with their time; negative current = discharging.</p>
+    </details>
+  </section>
+
+  <section class="block">
+    <div class="cardhead"><h2>While the laptop was off</h2></div>
+    <div class="scroll"><table id="snaps"></table></div>
+    <p class="note">From the controller’s lifetime counters, saved on every connection. Resolution 10 Wh.</p>
+  </section>
+
+  <section class="block">
+    <div class="cardhead"><h2>Capacity and conditioning</h2></div>
+    <p id="capacity"></p>
+    <details class="about"><summary>How the 50 % cycle works</summary>
+      <p class="note">Green Cell’s remedy for insufficient capacity: charge fully, then discharge to 50 %, 3 to 5 times. Start right after a full charge: solar charging goes off and comes back on at half the capacity setting (Ah out) or when the battery falls to 12.9 V, whichever comes first. If the voltage floor ends it, the battery holds less than its rating; Ah out ÷ 0.8 is a rough real capacity.</p>
+    </details>
+    <div class="row-actions"><button type="button" class="secondary" id="cycle-start">Start discharge to 50 %</button><span class="status" id="cycle-status"></span></div>
+    <p id="cycle-count"></p>
+    <div class="scroll"><table id="cycles"></table></div>
+  </section>
+
+  <section class="block">
+    <details class="settings">
+      <summary><h2>Controller settings</h2><span class="tag">read only</span></summary>
+      <div class="kv" id="ctl"></div>
+      <p class="note">Settings are read only. The one thing this page can change is the solar-charging switch at the top (Modbus coil 0x0000). Battery temperature comes from EPEver’s remote sensor when one is fitted to the battery; without it the controller reports its own temperature, and the low-temperature protections act on that.</p>
+    </details>
+  </section>
+
+  <footer class="foot">
+    <div class="row-actions">
+      <button type="button" class="secondary" id="csv-log">Export log CSV</button>
+      <button type="button" class="secondary" id="csv-days">Export daily CSV</button>
+      <button type="button" class="secondary" id="csv-snaps">Export snapshots CSV</button>
+    </div>
+    <p class="note" id="storage-note"></p>
+  </footer>
+</main>
+
+<script>
+"use strict";
+
+// ---------- constants ----------
+const POLL_MS = 333;
+const SLAVE = 1;
+const FULL_V = 13.9;            // boost + V ≥ this + net < FULL_TAIL_A ⇒ full; boost setting − 0.1 V once read
+const FULL_TAIL_A = 2;
+const GAP_S = 90;               // longer between samples ⇒ logging gap
+const KEEP_DAYS = 30;
+const CLOCK_WARN_S = 600;
+const CLOCK_CHECK_MS = 10 * 60 * 1000;
+const STAGES = ["Not charging", "Float", "Boost", "Equalize"];
+const BATT_V_STATUS = ["Normal", "Overvoltage", "Undervoltage", "Low-voltage disconnect", "Fault"];
+const LS = {                    // localStorage keys
+  day: d => `epever.min.${d}`,  // per local day: array of minute records
+  state: "epever.state.v1",
+  snaps: "epever.snaps.v1",
+  chartH: "epever.chartH",       // chart range in hours (1, 6, 24)
+};
+
+// Read-only blocks (function 04 = input registers, 03 = holding registers). Verified on Tracer 3210AN fw V01.55.
+const BLOCKS = {
+  rt: [4, 0x3100, 18],          // PV, battery, load, temperatures
+  st: [4, 0x3200, 3],           // battery / charging / discharging status
+  stats: [4, 0x3302, 27],       // today min/max, energy counters, 0x331B net current
+  clock: [3, 0x9013, 3],
+  cfg: [3, 0x9000, 15],
+};
+// Optional settings, read once per connection; a block this firmware lacks shows as "—".
+const CFG_EXTRA = {
+  lowTemp: [3, 0x9010, 2],      // low-temp charge / discharge limit
+  tempLimits: [3, 0x9017, 4],   // battery upper/lower, device over/recover
+  ratedLevel: [3, 0x9067, 1],
+  durations: [3, 0x906B, 4],    // equalize min, boost min, SoC-mode discharge stop %, charge depth %
+  mgmt: [3, 0x9070, 1],
+  liProt: [3, 0x9107, 1],
+};
+const BATT_TYPES = ["User defined", "Sealed", "GEL", "Flooded", "LiFePO4 (4s)", "LiFePO4 (8s)", "LiFePO4 (15s)", "LiFePO4 (16s)",
+  "Li-NMC (3s)", "Li-NMC (6s)", "Li-NMC (7s)", "Li-NMC (13s)", "Li-NMC (14s)"];
+const RATED_LEVELS = ["Auto", "12 V", "24 V", "36 V", "48 V", "60 V", "110 V", "120 V", "220 V", "240 V"];
+const LOAD_LEVELS = ["light", "moderate", "rated", "overload"];
+const COLD_CHARGE_WARN_C = 3;   // warn while charging at/below this reading (it may not be the battery's own temperature)
+
+// ---------- small utils ----------
+const $ = id => document.getElementById(id);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const pad = n => String(n).padStart(2, "0");
+const dayKey = t => { const d = new Date(t); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+const hhmm = t => { const d = new Date(t); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const fmtDT = t => `${dayKey(t)} ${hhmm(t)}`;
+// Display number: typographic minus, no "−0.00". CSV uses plain toFixed.
+const fmt = (v, d = 2) => (v == null || Number.isNaN(v)) ? "—" : (Math.abs(v) < 0.5 / 10 ** d ? 0 : v).toFixed(d).replace("-", "−");
+const fmtDur = s => {
+  s = Math.abs(s);
+  const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60);
+  return d ? `${d} d ${h} h` : h ? `${h} h ${m} min` : `${m} min`;
+};
+function lsGet(k, dflt) {
+  try { const s = localStorage.getItem(k); return s == null ? dflt : JSON.parse(s); } catch { return dflt; }
+}
+function lsSet(k, v) {
+  try { localStorage.setItem(k, JSON.stringify(v)); return true; }
+  catch (e) { showMsg("storage", "err", `Couldn't save to browser storage (${e.name}). The log may be full or storage blocked.`); return false; }
+}
+
+// ---------- messages ----------
+const msgs = new Map();
+function showMsg(id, kind, text) { msgs.set(id, { kind, text }); renderMsgs(); }
+function clearMsg(id) { if (msgs.delete(id)) renderMsgs(); }
+function renderMsgs() {
+  const box = $("messages");
+  box.replaceChildren(...[...msgs.values()].map(({ kind, text }) => {
+    const el = document.createElement("div");
+    el.className = `msg ${kind}`;
+    el.textContent = text;
+    return el;
+  }));
+}
+
+// ---------- Modbus RTU over Web Serial ----------
+function crc16(bytes) {
+  let c = 0xFFFF;
+  for (const b of bytes) {
+    c ^= b;
+    for (let i = 0; i < 8; i++) c = c & 1 ? (c >>> 1) ^ 0xA001 : c >>> 1;
+  }
+  return c;
+}
+
+class ModbusError extends Error {
+  constructor(kind, message) { super(message); this.kind = kind; }
+}
+
+const EXC = { 1: "illegal function", 2: "illegal data address", 3: "illegal data value", 4: "device failure", 6: "device busy" };
+
+class Link {
+  constructor(port) {
+    this.port = port;
+    this.rx = [];
+    this.closed = false;
+    this.queue = Promise.resolve();
+  }
+  async open() {
+    await this.port.open({ baudRate: 115200, dataBits: 8, stopBits: 1, parity: "none", flowControl: "none", bufferSize: 4096 });
+    this.writer = this.port.writable.getWriter();
+    this.readLoop = this.#readLoop();
+    await this.port.setSignals({ requestToSend: true }).catch(() => {});
+  }
+  // Framing/break/parity/overrun errors end the stream; port.readable is then a fresh stream.
+  async #readLoop() {
+    while (!this.closed && this.port.readable) {
+      this.reader = this.port.readable.getReader();
+      try {
+        for (;;) {
+          const { value, done } = await this.reader.read();
+          if (done) return;
+          for (const b of value) this.rx.push(b);
+          if (this.rx.length > 4096) this.rx.splice(0, this.rx.length - 4096);
+          this.wake?.();
+        }
+      } catch (e) {
+        if (e.name === "NetworkError") { this.readError = e; break; }
+      } finally {
+        try { this.reader.releaseLock(); } catch {}
+      }
+    }
+    if (!this.closed) this.readError ??= new DOMException("Serial port lost", "NetworkError");
+    this.wake?.();
+  }
+  async close() {
+    this.closed = true;
+    try { await this.reader?.cancel(); } catch {}
+    await this.readLoop?.catch(() => {});
+    try { this.writer?.releaseLock(); } catch {}
+    try { await this.port.close(); } catch {}
+  }
+  read(fc, addr, count) {
+    if (fc !== 3 && fc !== 4) throw new Error("read-only: function 03/04 only");
+    return this.#queued([SLAVE, fc, addr >> 8, addr & 0xFF, count >> 8, count & 0xFF], () => this.#parseRead(fc, count));
+  }
+  // The page's only write: coil 0x0000 "charging device on/off" (FC05). The reply echoes the request.
+  setCharging(on) {
+    const body = [SLAVE, 5, 0, 0, on ? 0xFF : 0, 0];
+    return this.#queued(body, () => this.#parseEcho(body));
+  }
+  // Serialize transactions.
+  #queued(body, parse) {
+    const p = this.queue.then(() => this.#transact(body, parse));
+    this.queue = p.catch(() => {});
+    return p;
+  }
+  async #transact(body, parse) {
+    const c = crc16(body);
+    const req = new Uint8Array([...body, c & 0xFF, c >> 8]);
+    let lastErr;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (this.closed) throw new ModbusError("closed", "Port closed");
+      if (this.readError) throw this.readError;
+      this.rx.length = 0;
+      // The EPEver cable's RS485 driver is switched by RTS (deasserted = transmit). When the
+      // adapter's own RS485 mode is on (epever_probe.py enables it), these calls are ignored.
+      await this.port.setSignals({ requestToSend: false });
+      await this.writer.write(req);
+      // Let the 8 bytes (0.7 ms) leave the UART before turning the bus around; the controller
+      // answers ~12 ms later. Busy-wait because timers are throttled in background tabs.
+      const t = performance.now();
+      while (performance.now() - t < 3) {}
+      await this.port.setSignals({ requestToSend: true });
+      try { return await this.#awaitReply(parse); }
+      catch (e) { lastErr = e; if (e.kind === "exception") throw e; await sleep(30); }
+    }
+    throw lastErr;
+  }
+  // CRC-valid exception reply for fc at rx[i] → throws.
+  #checkException(i, fc) {
+    const rx = this.rx;
+    if (rx[i + 1] !== (fc | 0x80) || rx.length < i + 5) return;
+    const fr = rx.slice(i, i + 5);
+    if (crc16(fr.slice(0, 3)) === (fr[3] | fr[4] << 8))
+      throw new ModbusError("exception", `Modbus exception ${fr[2]} (${EXC[fr[2]] ?? "unknown"})`);
+  }
+  // Find a CRC-valid reply in rx, skipping line-turnaround garbage; null if none yet.
+  #parseRead(fc, count) {
+    const rx = this.rx;
+    for (let i = rx.indexOf(SLAVE); i >= 0; i = rx.indexOf(SLAVE, i + 1)) {
+      this.#checkException(i, fc);
+      if (rx[i + 1] === fc && rx[i + 2] === count * 2 && rx.length >= i + 5 + count * 2) {
+        const n = 3 + count * 2;
+        const fr = rx.slice(i, i + n + 2);
+        if (crc16(fr.slice(0, n)) === (fr[n] | fr[n + 1] << 8))
+          return Array.from({ length: count }, (_, k) => fr[3 + 2 * k] << 8 | fr[4 + 2 * k]);
+      }
+    }
+    return null;
+  }
+  #parseEcho(body) {
+    const rx = this.rx, n = body.length, c = crc16(body);
+    for (let i = rx.indexOf(SLAVE); i >= 0; i = rx.indexOf(SLAVE, i + 1)) {
+      this.#checkException(i, body[1]);
+      if (rx.length >= i + n + 2 && body.every((b, k) => rx[i + k] === b) && rx[i + n] === (c & 0xFF) && rx[i + n + 1] === c >> 8)
+        return true;
+    }
+    return null;
+  }
+  // Woken by incoming bytes, so a throttled timer only delays a timeout, never a reply.
+  async #awaitReply(parse) {
+    const deadline = performance.now() + 400;
+    for (;;) {
+      const r = parse();
+      if (r) return r;
+      if (this.readError) throw this.readError;
+      if (performance.now() >= deadline) break;
+      await new Promise(res => { this.wake = res; setTimeout(res, 50); });
+      this.wake = null;
+    }
+    throw new ModbusError(this.rx.length ? "garbled" : "timeout",
+      this.rx.length ? `Reply not understood (${this.rx.length} bytes, bad CRC or framing)` : "No reply from controller");
+  }
+}
+
+// ---------- decoding ----------
+const u32 = (r, i) => (r[i] | r[i + 1] << 16) >>> 0;
+const s32 = (r, i) => r[i] | r[i + 1] << 16;
+const s16 = v => v & 0x8000 ? v - 0x10000 : v;
+
+function decode(b) {
+  const s = { t: Date.now() };
+  if (b.rt) {
+    const r = b.rt;
+    Object.assign(s, {
+      pvV: r[0] / 100, pvA: r[1] / 100, pvW: u32(r, 2) / 100,
+      batV: r[4] / 100, chgA: r[5] / 100, chgW: u32(r, 6) / 100,
+      loadV: r[12] / 100, loadA: r[13] / 100, loadW: u32(r, 14) / 100,
+      batT: s16(r[16]) / 100, devT: s16(r[17]) / 100,
+    });
+  }
+  if (b.st) {
+    const [bs, cs, ds] = b.st;
+    Object.assign(s, {
+      battStatus: bs, battVStatus: bs & 0xF, chgStatus: cs, dischgStatus: ds, loadLevel: (ds >> 12) & 3,
+      stage: (cs >> 2) & 3, chgFault: (cs >> 1) & 1, pvInput: cs >> 14,
+      loadOn: ds & 1, loadFault: (ds >> 1) & 1,
+    });
+  }
+  if (b.stats) {
+    const r = b.stats; // index 0 = 0x3302
+    Object.assign(s, {
+      maxBatVToday: r[0] / 100, minBatVToday: r[1] / 100,
+      consToday: u32(r, 2) / 100, consMonth: u32(r, 4) / 100, consYear: u32(r, 6) / 100, consTotal: u32(r, 8) / 100,
+      genToday: u32(r, 10) / 100, genMonth: u32(r, 12) / 100, genYear: u32(r, 14) / 100, genTotal: u32(r, 16) / 100,
+      netA: s32(r, 25) / 100,
+    });
+  }
+  return s;
+}
+
+function decodeClock(r) {
+  const [ms, dh, ym] = r;
+  const d = new Date(2000 + (ym >> 8), (ym & 0xFF) - 1, dh >> 8, dh & 0xFF, ms >> 8, ms & 0xFF);
+  return Number.isNaN(d.getTime()) ? null : d.getTime();
+}
+
+function decodeCfg(r) {
+  return {
+    battType: r[0], capacityAh: r[1], hvd: r[3] / 100, chargeLimit: r[4] / 100,
+    equalizeV: r[6] / 100, boostV: r[7] / 100, floatV: r[8] / 100, boostReconnect: r[9] / 100,
+    lvr: r[10] / 100, uvWarn: r[12] / 100, lvd: r[13] / 100, dischargeLimit: r[14] / 100,
+  };
+}
+
+function decodeCfgExtra(x) {
+  const c = {}, t = v => s16(v) / 100;
+  if (x.lowTemp) Object.assign(c, { lowTempCharge: t(x.lowTemp[0]), lowTempDischarge: t(x.lowTemp[1]) });
+  if (x.tempLimits) {
+    const [hi, lo, dev, rec] = x.tempLimits;
+    Object.assign(c, { battTempHi: t(hi), battTempLo: t(lo), devOverTemp: t(dev), devRecoverTemp: t(rec) });
+  }
+  if (x.ratedLevel) c.ratedLevel = x.ratedLevel[0];
+  // Percentages read 30 / 100 on fw V01.55, i.e. ×1 despite the document's ×100.
+  if (x.durations) Object.assign(c, { equalizeMin: x.durations[0], boostMin: x.durations[1], socStopPct: x.durations[2], socChargePct: x.durations[3] });
+  if (x.mgmt) c.mgmtMode = x.mgmt[0];
+  if (x.liProt) Object.assign(c, { lowTempChargeProt: (x.liProt[0] >> 8) & 1, lowTempDischargeProt: (x.liProt[0] >> 9) & 1, overTempDerate: (x.liProt[0] >> 11) & 1 });
+  return c;
+}
+
+// Status words (0x3200–0x3202) → { faults, warnings } as text.
+function statusIssues(s) {
+  const faults = new Set(), warns = new Set();
+  const bit = (v, n) => (v >> n) & 1;
+  const bs = s.battStatus, cs = s.chgStatus, ds = s.dischgStatus;
+  const bv = bs & 0xF, bt = (bs >> 4) & 0xF;
+  if (bv === 1) warns.add("Battery overvoltage");
+  if (bv === 2) warns.add("Battery undervoltage");
+  if (bv === 3) warns.add("Battery over-discharged (low-voltage disconnect)");
+  if (bv === 4) faults.add("Battery voltage fault");
+  if (bt === 1) warns.add("Battery over temperature");
+  if (bt === 2) warns.add("Battery low temperature");
+  if (bit(bs, 8)) warns.add("Battery internal resistance abnormal");
+  if (bit(bs, 15)) faults.add("Wrong rated-voltage identification");
+  const pv = cs >> 14;  // 1 = no PV power (normal at night)
+  if (pv === 2) faults.add("PV input voltage too high");
+  if (pv === 3) faults.add("PV input voltage error");
+  for (const [n, t] of [[13, "Charging MOSFET short circuit"], [12, "Charging or anti-reverse MOSFET open circuit"],
+    [11, "Anti-reverse MOSFET short circuit"], [10, "PV input over current"], [9, "Load over current"],
+    [8, "Load short circuit"], [7, "Load MOSFET short circuit"], [4, "PV input short circuit"], [1, "Charging fault"]])
+    if (bit(cs, n)) faults.add(t);
+  const lv = ds >> 14;
+  if (lv === 1) warns.add("Load output: input voltage low");
+  if (lv === 2) warns.add("Load output: input voltage high");
+  if (((ds >> 12) & 3) === 3) warns.add("Load output overloaded");
+  for (const [n, t] of [[11, "Load short circuit"], [10, "Load output unable to discharge"], [9, "Load output unable to stop discharging"],
+    [8, "Load output voltage abnormal"], [7, "Load input over voltage"], [6, "Short circuit on high-voltage side"],
+    [5, "Boost over voltage"], [4, "Load output over voltage"], [1, "Load output fault"]])
+    if (bit(ds, n)) faults.add(t);
+  if (s.stage !== 0 && s.batT <= COLD_CHARGE_WARN_C)
+    warns.add(`Charging at a temperature reading of ${fmt(s.batT, 1)} °C. LiFePO4 must not be charged below 0 °C. ` +
+      "Without a remote sensor on the battery, this reading is the controller's own temperature.");
+  return { faults: [...faults], warns: [...warns] };
+}
+
+// ---------- persistent state ----------
+// state: { deficitAh, lastFullAt, approx, gapMin, last: {t, batV, netA, genTotal, consTotal}, cfg, clockOffsetS, clockReadAt }
+let state = lsGet(LS.state, { deficitAh: null, lastFullAt: null, approx: true, gapMin: 0, last: null });
+let snaps = lsGet(LS.snaps, []);
+const saveState = () => lsSet(LS.state, state);
+
+// ---------- integration & logging ----------
+let bucket = null; // current minute accumulator
+let live = null;   // latest sample
+
+function newBucket(minute) {
+  return { m: minute, n: 0, vSum: 0, iSum: 0, vlo: Infinity, vhi: -Infinity, ilo: Infinity, ihi: -Infinity, tvlo: 0, tvhi: 0, tilo: 0, tihi: 0,
+    ain: 0, aout: 0, ws: 0, wl: 0, lvd: 0, st: null };
+}
+
+function isLvd(s) {
+  if (s.battVStatus === 3) return true;
+  const lvr = state.cfg?.lvr;
+  return s.loadOn === 0 && lvr != null && s.batV != null && s.batV < lvr;
+}
+
+function isFull(s) {
+  const fullV = state.cfg?.boostV != null ? state.cfg.boostV - 0.1 : FULL_V;
+  return s.stage === 1 || (s.stage === 2 && s.batV >= fullV && s.netA < FULL_TAIL_A);
+}
+
+function ingest(s) {
+  const prev = state.last;
+  const dt = prev ? (s.t - prev.t) / 1000 : null;
+
+  // Ah since full
+  if (state.deficitAh == null) { state.deficitAh = 0; state.approx = true; } // unknown start
+  if (dt != null && dt > 0 && dt <= GAP_S && prev.netA != null && s.netA != null) {
+    const ah = (prev.netA + s.netA) / 2 * dt / 3600;
+    state.deficitAh = Math.max(0, state.deficitAh - ah);
+  } else if (dt != null && dt > GAP_S) {
+    // Gap: estimate net battery energy from lifetime counters (charged − consumed, kWh).
+    const dGen = s.genTotal - prev.genTotal, dCons = s.consTotal - prev.consTotal;
+    if (Number.isFinite(dGen) && Number.isFinite(dCons) && dGen >= 0 && dCons >= 0) {
+      const v = ((prev.batV ?? s.batV) + s.batV) / 2 || 12.8;
+      state.deficitAh = Math.max(0, state.deficitAh - (dGen - dCons) * 1000 / v);
+    }
+    state.approx = true;
+    state.gapMin += Math.round(dt / 60);
+  }
+  if (isFull(s)) {
+    Object.assign(state, { deficitAh: 0, lastFullAt: s.t, approx: false, gapMin: 0 });
+  }
+
+  // minute bucket
+  const minute = Math.floor(s.t / 60000);
+  if (bucket && bucket.m !== minute) flushBucket();
+  bucket ??= newBucket(minute);
+  const b = bucket;
+  b.n++;
+  b.vSum += s.batV; b.iSum += s.netA;
+  if (s.batV < b.vlo) { b.vlo = s.batV; b.tvlo = s.t; }
+  if (s.batV > b.vhi) { b.vhi = s.batV; b.tvhi = s.t; }
+  if (s.netA < b.ilo) { b.ilo = s.netA; b.tilo = s.t; }
+  if (s.netA > b.ihi) { b.ihi = s.netA; b.tihi = s.t; }
+  if (dt != null && dt > 0 && dt <= GAP_S) {
+    const h = dt / 3600;
+    const iAvg = (prev.netA + s.netA) / 2;
+    if (iAvg > 0) b.ain += iAvg * h; else b.aout -= iAvg * h;
+    b.ws += ((prev.pvW ?? s.pvW) + s.pvW) / 2 * h;
+    b.wl += ((prev.loadW ?? s.loadW) + s.loadW) / 2 * h;
+  }
+  if (isLvd(s)) b.lvd = 1;
+  b.st = s.stage;
+
+  state.last = { t: s.t, batV: s.batV, netA: s.netA, pvW: s.pvW, loadW: s.loadW, genTotal: s.genTotal, consTotal: s.consTotal };
+  saveState();
+}
+
+// Minute record: [epochMinute, vAvg, vMin, vMax, iAvg, AhIn, AhOut, WhSolar, WhLoad, lvd, stage, samples]
+// Minute record: [m, vAvg, vMin, vMax, iAvg, AhIn, AhOut, WhSolar, WhLoad, lvd, stage, samples,
+//   iMin, iMax, then seconds into the minute of vMin, vMax, iMin, iMax]. Records before 2026-11-10 stop at samples.
+function bucketRecord(b) {
+  const r2 = x => Math.round(x * 100) / 100, r4 = x => Math.round(x * 10000) / 10000, sec = t => Math.round((t / 1000 - b.m * 60) * 10) / 10;
+  return [b.m, r2(b.vSum / b.n), r2(b.vlo), r2(b.vhi), r2(b.iSum / b.n), r4(b.ain), r4(b.aout), r2(b.ws), r2(b.wl), b.lvd, b.st, b.n,
+    r2(b.ilo), r2(b.ihi), sec(b.tvlo), sec(b.tvhi), sec(b.tilo), sec(b.tihi)];
+}
+
+// Two partial records of the same minute → one: averages weighted by samples, sums added, extremes kept with their time.
+function mergeRecords(a, b) {
+  const n = a[11] + b[11], avg = i => Math.round((a[i] * a[11] + b[i] * b[11]) / n * 100) / 100;
+  const ext = (i, ti, low) => (a[i] == null || (b[i] != null && (low ? b[i] < a[i] : b[i] > a[i]))) ? [b[i], b[ti]] : [a[i], a[ti]];
+  const [vlo, tvlo] = ext(2, 14, true), [vhi, tvhi] = ext(3, 15, false), [ilo, tilo] = ext(12, 16, true), [ihi, tihi] = ext(13, 17, false);
+  const add = i => Math.round((a[i] + b[i]) * 10000) / 10000;
+  return [a[0], avg(1), vlo, vhi, avg(4), add(5), add(6), add(7), add(8), Math.max(a[9], b[9]), b[10], n, ilo, ihi, tvlo, tvhi, tilo, tihi];
+}
+
+function flushBucket() {
+  const b = bucket;
+  bucket = null;
+  if (!b || !b.n) return;
+  const rec = bucketRecord(b);
+  const key = LS.day(dayKey(b.m * 60000));
+  const arr = lsGet(key, []);
+  if (arr.at(-1)?.[0] === b.m) {  // this minute was already saved in part (reload or export mid-minute)
+    arr[arr.length - 1] = mergeRecords(arr.at(-1), rec);
+    if ((state.archivedMin ?? 0) >= b.m) state.archivedMin = b.m - 1;  // resend it
+  } else arr.push(rec);
+  lsSet(key, arr);
+  pruneOld();
+  syncArchive();
+}
+
+let lastPrune = 0;
+function pruneOld() {
+  if (Date.now() - lastPrune < 3600e3) return;
+  lastPrune = Date.now();
+  const cutoff = dayKey(Date.now() - KEEP_DAYS * 86400e3);
+  try { for (const k of storedDayKeys()) if (k.slice(11) < cutoff) localStorage.removeItem(k); } catch {}
+}
+
+function storedDayKeys() {
+  const out = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k?.startsWith("epever.min.")) out.push(k);
+    }
+  } catch {}
+  return out.sort();
+}
+
+function loadRecords(sinceMs) {
+  const since = Math.floor(sinceMs / 60000), recs = [];
+  for (const k of storedDayKeys()) {
+    if (k.slice(11) < dayKey(sinceMs)) continue;
+    for (const r of lsGet(k, [])) if (r[0] >= since) recs.push(r);
+  }
+  if (bucket?.n) { // include the minute in progress
+    const b = bucket;
+    recs.push(bucketRecord(bucket));
+  }
+  return recs.sort((a, b) => a[0] - b[0]);
+}
+
+// ---------- connection snapshots ----------
+function recordSnapshot(s) {
+  const prev = state.last;
+  const snap = { t: s.t, genTotal: s.genTotal, consTotal: s.consTotal, batV: s.batV };
+  if (prev?.genTotal != null && s.t - prev.t > GAP_S * 1000) {
+    Object.assign(snap, {
+      offFrom: prev.t,
+      genWh: Math.round((s.genTotal - prev.genTotal) * 1000),
+      consWh: Math.round((s.consTotal - prev.consTotal) * 1000),
+      vFrom: prev.batV,
+    });
+  }
+  snaps.push(snap);
+  lsSet(LS.snaps, snaps);
+  syncArchive();
+}
+
+// ---------- archive: epever_server.py keeps the log in epever.db ----------
+// Sends finished minutes and snapshots the server hasn't confirmed; inserts are keyed, so resending is harmless.
+const ARCHIVE_URL = location.protocol.startsWith("http") ? "/api/sync" : null;
+let archiving = false;
+
+function storedRecords(afterMin, beforeMin) {
+  const out = [], fromDay = dayKey(afterMin * 60000);
+  for (const k of storedDayKeys()) {
+    if (k.slice(11) < fromDay) continue;
+    for (const r of lsGet(k, [])) if (r[0] > afterMin && r[0] < beforeMin) out.push(r);
+  }
+  return out;
+}
+
+async function syncArchive() {
+  if (!ARCHIVE_URL || archiving) return;
+  archiving = true;
+  try {
+    const before = bucket?.m ?? Math.floor(Date.now() / 60000);  // minutes before this one are final
+    for (;;) {
+      const minutes = storedRecords(state.archivedMin ?? 0, before).slice(0, 1440);
+      const newSnaps = snaps.filter(x => x.t > (state.archivedSnapT ?? 0));
+      if (!minutes.length && !newSnaps.length) break;
+      const res = await fetch(ARCHIVE_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ minutes, snaps: newSnaps }) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (minutes.length) state.archivedMin = minutes.at(-1)[0];
+      if (newSnaps.length) state.archivedSnapT = newSnaps.at(-1).t;
+      saveState();
+      if (minutes.length < 1440) break;
+    }
+    clearMsg("archive");
+  } catch (e) {
+    showMsg("archive", "info", `Archive (epever.db) not reachable: ${e.message}. The log stays in this browser and is sent automatically once the server runs again (epever_monitor.sh starts it).`);
+  } finally {
+    archiving = false;
+  }
+}
+
+// ---------- raw readings: every poll → epever.db, so the 1 h view survives a reload ----------
+const RAW_URL = ARCHIVE_URL && "/api/raw";
+const RAW_MAX_PENDING = 12 * 3600;  // readings kept in memory while the server is unreachable
+let rawPending = [], rawSending = false;
+
+function queueRaw(s) {
+  if (!RAW_URL) return;
+  rawPending.push([s.t, s.batV, s.netA, s.loadV, s.loadA, s.pvV, s.chgA]);
+  if (rawPending.length > RAW_MAX_PENDING) rawPending.splice(0, rawPending.length - RAW_MAX_PENDING);
+}
+
+async function sendRaw() {
+  if (!RAW_URL || rawSending || !rawPending.length) return;
+  rawSending = true;
+  const batch = rawPending.slice();
+  try {
+    const res = await fetch(RAW_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(batch) });
+    if (res.ok) rawPending.splice(0, batch.length);
+  } catch {} finally {
+    rawSending = false;
+  }
+}
+
+// ---------- statistics: per day / week / month from epever.db ----------
+let statsBy = "day";
+
+async function renderStats(by = statsBy) {
+  if (!ARCHIVE_URL) return;
+  statsBy = by;
+  for (const b of $("stats-by").children) b.setAttribute("aria-pressed", String(b.dataset.by === by));
+  try {
+    const rows = await (await fetch(`/api/stats?by=${by}`)).json();
+    const at = (x, d) => x?.[0] == null ? "—" : `${fmt(x[0], d)} at ${by === "day" ? hhmm(x[1] * 1000) : fmtDT(x[1] * 1000).slice(5)}`;
+    table($("stats"), [{ day: "Day", week: "Week", month: "Month" }[by], "Logged", "Ah in", "Ah out", "Net Ah", "Solar Ah", "Load Ah",
+      "While off in / out Wh", "Lowest V", "Highest V", "Lowest A", "Highest A", "Cutoff min"],
+      rows.map(r => [r.period, `${fmt(r.minutes / 60, 1)} h`, fmt(r.ahIn, 1), fmt(r.ahOut, 1), fmt(r.ahIn - r.ahOut, 1),
+        fmt(r.ahSolar, 1), fmt(r.ahLoad, 1), `${r.offWhIn} / ${r.offWhOut}`, at(r.vLow, 2), at(r.vHigh, 2), at(r.iLow, 2), at(r.iHigh, 2), String(r.lvdMin)]));
+    $("stats-card").hidden = false;
+  } catch {}
+}
+
+// On open: the last hour of readings from the server, ahead of anything polled since.
+async function loadRaw() {
+  if (!RAW_URL) return;
+  try {
+    const rows = await (await fetch(`${RAW_URL}?since=${Date.now() - 3600e3}`)).json();
+    const first = chart.live[0]?.[0] ?? Infinity;
+    chart.live = [...rows.map(([t, v, i]) => [t / 60000, v, v, v, i]).filter(r => r[0] < first), ...chart.live];
+    refreshChart();
+  } catch {}
+}
+
+// ---------- rendering ----------
+function setTile(id, value, unit) {
+  const el = $(id);
+  el.replaceChildren(document.createTextNode(value));
+  if (unit) { const u = document.createElement("small"); u.textContent = unit; el.append(u); }
+}
+
+function kv(el, pairs) {
+  el.replaceChildren(...pairs.map(([k, v]) => {
+    const d = document.createElement("div");
+    const a = document.createElement("span"), b = document.createElement("span");
+    a.textContent = k; b.textContent = v;
+    d.append(a, b);
+    return d;
+  }));
+}
+
+function renderLive() {
+  const s = live;
+  if (!s) return;
+  setTile("t-vbat", fmt(s.batV), "V");
+  $("t-stage").textContent = `${STAGES[s.stage] ?? "—"}, ${BATT_V_STATUS[s.battVStatus] ?? `status ${s.battVStatus}`}`;
+  setTile("t-net", (s.netA > 0 ? "+" : "") + fmt(s.netA), "A");
+  $("t-netd").textContent = `${s.netA >= 0 ? "Charging" : "Discharging"}, ${fmt(s.netA * s.batV, 0)} W`;
+  setTile("t-pv", fmt(s.pvW, 0), "W");
+  $("t-pvd").textContent = `${fmt(s.pvV, 1)} V, ${fmt(s.pvA)} A, charging ${fmt(s.chgA)} A`;
+  setTile("t-load", fmt(s.loadW, 0), "W");
+  setTile("m-v", fmt(s.batV), "V"); setTile("m-a", (s.netA > 0 ? "+" : "") + fmt(s.netA), "A");
+  setTile("m-pv", fmt(s.pvW, 0), "W solar"); setTile("m-load", fmt(s.loadW, 0), "W load");
+  $("t-loadd").textContent = `${fmt(s.loadA)} A, output ${s.loadOn ? `on, ${LOAD_LEVELS[s.loadLevel]} load` : "off"}${s.loadFault ? ", FAULT" : ""}`;
+  renderAh();
+  const day = ctrlSince(false), month = ctrlSince(true);
+  kv($("today"), [
+    [`Generated ${day}`, `${fmt(s.genToday * 1000, 0)} Wh`],
+    [`Consumed ${day}`, `${fmt(s.consToday * 1000, 0)} Wh`],
+    [`Battery max ${day}`, `${fmt(s.maxBatVToday)} V`],
+    [`Battery min ${day}`, `${fmt(s.minBatVToday)} V`],
+    [`Generated ${month}`, `${fmt(s.genMonth)} kWh`],
+    [`Consumed ${month}`, `${fmt(s.consMonth)} kWh`],
+    ["Battery temperature", `${fmt(s.batT, 1)} °C`],
+    ["Controller temperature", `${fmt(s.devT, 1)} °C`],
+  ]);
+}
+
+// "since …" in laptop time for the controller's day or month counters, which reset at the controller's own midnight.
+function ctrlSince(month) {
+  const off = (state.clockOffsetS ?? 0) * 1000, d = new Date(Date.now() + off);
+  if (month) d.setDate(1);
+  d.setHours(0, 0, 0, 0);
+  const t = d.getTime() - off;
+  if (month) return `since ${new Date(t).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`;
+  return `since ${hhmm(t)}${dayKey(t) === dayKey(Date.now()) ? "" : " yesterday"}`;
+}
+
+function renderAh() {
+  if (state.deficitAh == null) return;
+  const cap = state.cfg?.capacityAh;
+  setTile("t-ah", (state.deficitAh > 0.05 ? "−" : "") + fmt(state.deficitAh, 1), "Ah");
+  const parts = [];
+  if (cap) parts.push(`≈ ${Math.round(100 * (1 - state.deficitAh / cap))} % of ${cap} Ah`);
+  parts.push(state.lastFullAt ? `full ${fmtDT(state.lastFullAt)}` : "no full charge seen yet");
+  if (state.approx) parts.push(state.gapMin ? `approx. (${fmtDur(state.gapMin * 60)} not logged)` : "approx.");
+  $("t-ahd").textContent = parts.join(", ");
+}
+
+function renderCtl() {
+  const c = state.cfg;
+  const pairs = [];
+  if (c) {
+    const onOff = v => v == null ? "—" : v ? "on" : "off";
+    const deg = v => v == null ? "—" : `${fmt(v, 1)} °C`;
+    const min = v => v == null ? "—" : `${v} min`;
+    pairs.push(
+      ["Battery type", BATT_TYPES[c.battType] ?? `code ${c.battType}`],
+      ["Rated voltage", c.ratedLevel == null ? "—" : RATED_LEVELS[c.ratedLevel] ?? `code ${c.ratedLevel}`],
+      ["Battery capacity (setting)", `${c.capacityAh} Ah`],
+      ["Charge control", c.mgmtMode == null ? "—" : c.mgmtMode ? `SoC (stop discharge ${c.socStopPct} %, charge to ${c.socChargePct} %)` : "Voltage"],
+      ["Boost / float", `${fmt(c.boostV)} / ${fmt(c.floatV)} V`],
+      ["Boost / equalize duration", `${min(c.boostMin)} / ${min(c.equalizeMin)}`],
+      ["Equalize voltage", `${fmt(c.equalizeV)} V`],
+      ["Boost reconnect", `${fmt(c.boostReconnect)} V`],
+      ["Charging limit / overvoltage disconnect", `${fmt(c.chargeLimit)} / ${fmt(c.hvd)} V`],
+      ["Undervoltage warning", `${fmt(c.uvWarn)} V`],
+      ["Low-voltage disconnect / reconnect", `${fmt(c.lvd)} / ${fmt(c.lvr)} V`],
+      ["Discharge limit", `${fmt(c.dischargeLimit)} V`],
+      ["Low-temp charge protection", `${onOff(c.lowTempChargeProt)}, below ${deg(c.lowTempCharge)}`],
+      ["Low-temp discharge protection", `${onOff(c.lowTempDischargeProt)}, below ${deg(c.lowTempDischarge)}`],
+      ["Battery temp limits (low / high)", `${deg(c.battTempLo)} / ${deg(c.battTempHi)}`],
+      ["Controller over-temp / recover", `${deg(c.devOverTemp)} / ${deg(c.devRecoverTemp)}`],
+      ["Over-temp power derating", onOff(c.overTempDerate)],
+    );
+  }
+  if (state.clockOffsetS != null) {
+    const off = state.clockOffsetS;
+    pairs.push(["Controller clock vs laptop", `${off < 0 ? "behind" : "ahead"} ${fmtDur(off)}`]);
+  }
+  if (live) pairs.push(["Lifetime generated / consumed", `${fmt(live.genTotal)} / ${fmt(live.consTotal)} kWh`]);
+  kv($("ctl"), pairs);
+  let bytes = 0;
+  try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k.startsWith("epever.")) bytes += (localStorage.getItem(k)?.length ?? 0) + k.length; } } catch {}
+  $("storage-note").textContent = `Log: ${storedDayKeys().length} day(s), ${(bytes / 1024).toFixed(0)} KB in browser storage (kept ${KEEP_DAYS} days).`;
+}
+
+function checkClock(ctrlMs) {
+  if (ctrlMs == null) { showMsg("clock", "warn", "Controller clock returned an invalid date."); return; }
+  const off = (ctrlMs - Date.now()) / 1000;
+  state.clockOffsetS = off;
+  state.clockReadAt = Date.now();
+  saveState();
+  if (Math.abs(off) > CLOCK_WARN_S) {
+    const ctrlMidnight = new Date(ctrlMs);
+    ctrlMidnight.setHours(24, 0, 0, 0);
+    const realRoll = ctrlMidnight.getTime() - off * 1000;  // laptop = controller − offset
+    showMsg("clock", "warn",
+      `Controller clock is ${off < 0 ? "behind" : "ahead"} by ${fmtDur(off)} (it reads ${fmtDT(ctrlMs)}).\n` +
+      `Its “today” counters and min/max reset at its own midnight, which is ${hhmm(realRoll)} on the laptop clock.\n` +
+      `To fix it: Disconnect here, then run “uv run epever_setclock.py” next to this file (sets the controller to laptop time).`);
+    $("today-note").textContent = `resets ${hhmm(realRoll)} laptop time`;
+  } else {
+    clearMsg("clock");
+    $("today-note").textContent = "controller clock in sync";
+  }
+}
+
+// Daily summaries from minute records.
+function dailySummaries() {
+  const days = [];
+  for (const k of storedDayKeys()) {
+    const recs = lsGet(k, []);
+    if (!recs.length) continue;
+    const d = { day: k.slice(11), ain: 0, aout: 0, ws: 0, wl: 0, as: 0, al: 0, lo: Infinity, loT: null, hi: -Infinity, hiT: null, lvdMin: 0, minutes: 0 };
+    for (const r of recs) {
+      d.ain += r[5]; d.aout += r[6]; d.ws += r[7]; d.wl += r[8];
+      if (r[1] > 0) { d.as += r[7] / r[1]; d.al += r[8] / r[1]; } d.lvdMin += r[9]; d.minutes++;
+      if (r[2] < d.lo) { d.lo = r[2]; d.loT = r[0] * 60000; }
+      if (r[3] > d.hi) { d.hi = r[3]; d.hiT = r[0] * 60000; }
+    }
+    days.push(d);
+  }
+  return days.reverse();
+}
+
+function table(el, head, rows) {
+  const thead = document.createElement("tr");
+  for (const h of head) { const th = document.createElement("th"); th.textContent = h; thead.append(th); }
+  const trs = rows.map(r => {
+    const tr = document.createElement("tr");
+    for (const c of r) { const td = document.createElement("td"); td.textContent = c; if (c === "—") td.className = "na"; tr.append(td); }
+    return tr;
+  });
+  if (!rows.length) {
+    const tr = document.createElement("tr"), td = document.createElement("td");
+    td.colSpan = head.length; td.className = "na"; td.textContent = "Nothing logged yet.";
+    tr.append(td); trs.push(tr);
+  }
+  el.replaceChildren(thead, ...trs);
+}
+
+function renderDays() {
+  table($("days"),
+    ["Day", "Ah in", "Ah out", "Solar Ah", "Load Ah", "Lowest V", "at", "Highest V", "at", "LVD min", "Logged"],
+    dailySummaries().map(d => [
+      d.day, fmt(d.ain, 1), fmt(d.aout, 1), fmt(d.as, 1), fmt(d.al, 1),
+      fmt(d.lo), d.loT ? hhmm(d.loT) : "—", fmt(d.hi), d.hiT ? hhmm(d.hiT) : "—",
+      String(d.lvdMin), `${fmt(d.minutes / 60, 1)} h`,
+    ]));
+}
+
+function renderSnaps() {
+  const rows = snaps.filter(s => s.offFrom != null).slice(-30).reverse().map(s => {
+    const net = s.genWh - s.consWh;
+    const v = (s.vFrom + s.batV) / 2 || 12.8;
+    return [fmtDT(s.offFrom), fmtDT(s.t), fmtDur((s.t - s.offFrom) / 1000), String(s.genWh), String(s.consWh),
+      (net > 0 ? "+" : "") + fmt(net, 0), (net > 0 ? "+" : "") + fmt(net / v, 1), `${fmt(s.vFrom)} → ${fmt(s.batV)}`];
+  });
+  table($("snaps"), ["Off from", "Until", "Duration", "Generated Wh", "Used Wh", "Net Wh", "≈ Ah", "Battery V"], rows);
+}
+
+// ---------- chart (two panels, shared time axis) ----------
+const CHART_TICK_MS = { 1: 10 * 60000, 6: 3600e3, 24: 3 * 3600e3 };
+const chart = { recs: [], hover: null, live: [], hours: 1 };  // live: every poll, last hour, record layout
+
+function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+function niceStep(range, target) {
+  const raw = range / target, p = 10 ** Math.floor(Math.log10(raw)), f = raw / p;
+  return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+}
+
+function drawChart() {
+  const cv = $("chart"), ctx = cv.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const W = cv.clientWidth, H = cv.clientHeight;
+  if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  const C = { ink: css("--color-ink"), ink2: css("--color-ink-2"), muted: css("--color-muted"), grid: css("--color-grid"), axis: css("--color-axis"), surface: css("--color-paper"), v: css("--series-v"), a: css("--series-a") };
+  ctx.font = `500 12px ${css("--font-body")}`;
+
+  const now = Date.now(), t0 = now - chart.hours * 3600e3;
+  const recs = chart.recs;
+  const L = 44, R = 12, gapMid = 30, top = 20, bottom = 24;
+  const ph = (H - top - bottom - gapMid) / 2;
+  const panels = [
+    { y: top, col: 1, unit: "V", color: C.v, label: "Battery voltage (V)", fixed: [12, 14.4], dec: 1 },
+    { y: top + ph + gapMid, col: 4, unit: "A", color: C.a, label: "Net battery current (A)", fixed: [-2, 2], dec: 0, zero: true },
+  ];
+  const x = t => L + (t - t0) / (now - t0) * (W - L - R);
+  chart.geom = { L, R, W, t0, now, x };
+
+  for (const p of panels) {
+    let lo = p.fixed[0], hi = p.fixed[1];
+    for (const r of recs) { lo = Math.min(lo, recPeak(r, p.unit, false)[0]); hi = Math.max(hi, recPeak(r, p.unit, true)[0]); }
+    const step = niceStep(hi - lo, 4);
+    lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step;
+    const y = v => p.y + ph - (v - lo) / (hi - lo) * ph;
+    p.yf = y;
+
+    ctx.fillStyle = C.ink2; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+    ctx.fillText(p.label, L, p.y - 4);
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (let v = lo; v <= hi + step / 2; v += step) {
+      ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(L, Math.round(y(v)) + .5); ctx.lineTo(W - R, Math.round(y(v)) + .5); ctx.stroke();
+      ctx.fillStyle = C.muted;
+      ctx.fillText(fmt(v, step % 1 === 0 ? 0 : (step * 10) % 1 === 0 ? 1 : 2), L - 6, y(v));
+    }
+    if (p.zero && lo < 0 && hi > 0) {
+      ctx.strokeStyle = C.axis; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(L, y(0)); ctx.lineTo(W - R, y(0)); ctx.stroke();
+    }
+    // line, broken at gaps > 2 min
+    ctx.strokeStyle = p.color; ctx.lineWidth = 2; ctx.lineJoin = "round";
+    ctx.beginPath();
+    let prev = null;
+    for (const r of recs) {
+      const X = x(r[0] * 60000), Y = y(r[p.col]);
+      if (prev == null || r[0] - prev > 2) ctx.moveTo(X, Y); else ctx.lineTo(X, Y);
+      prev = r[0];
+    }
+    ctx.stroke();
+    // peaks in view: minute records carry their own min/max, live readings are single values
+    if (recs.length) {
+      let hiPeak;
+      for (const above of [true, false]) {
+        const [v, m] = recs.map(r => recPeak(r, p.unit, above)).reduce((a, b) => (above ? b[0] > a[0] : b[0] < a[0]) ? b : a);
+        if (!above && v === hiPeak[0] && m === hiPeak[1]) continue;
+        hiPeak ??= [v, m];
+        drawPeak(ctx, x(m * 60000), y(v), `${fmt(v, 2)} ${p.unit} at ${peakTime(m)}`, above, p.color, C, p.y, p.y + ph, W - R);
+      }
+    }
+  }
+  // time axis
+  ctx.fillStyle = C.muted; ctx.textAlign = "center"; ctx.textBaseline = "top";
+  const step = CHART_TICK_MS[chart.hours], off = new Date(t0).getTimezoneOffset() * 60000;  // ticks on local-time multiples
+  for (let t = Math.ceil((t0 - off) / step) * step + off; t <= now; t += step) {
+    const X = x(t);
+    ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+    for (const p of panels) { ctx.beginPath(); ctx.moveTo(Math.round(X) + .5, p.y); ctx.lineTo(Math.round(X) + .5, p.y + ph); ctx.stroke(); }
+    ctx.fillText(hhmm(t), X, H - bottom + 6);
+  }
+  // crosshair
+  const h = chart.hover;
+  if (h) {
+    const X = x(h[0] * 60000);
+    ctx.strokeStyle = C.ink2; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(Math.round(X) + .5, top); ctx.lineTo(Math.round(X) + .5, H - bottom); ctx.stroke();
+    for (const p of panels) {
+      ctx.fillStyle = p.color; ctx.strokeStyle = C.surface; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(X, p.yf(h[p.col]), 4, 0, 7); ctx.fill(); ctx.stroke();
+    }
+  }
+}
+
+// [value, epoch minute] of a record's high or low. Live readings are [m, v, v, v, i]; older minute records lack
+// current extremes and their times, so they fall back to the average and the whole minute.
+function recPeak(r, unit, high) {
+  const [vi, ti] = unit === "V" ? (high ? [3, 15] : [2, 14]) : (high ? [13, 17] : [12, 16]);
+  return [r[vi] ?? r[4], r[ti] == null ? r[0] : r[0] + r[ti] / 60];
+}
+
+// Exact times get seconds; old minute records only know their minute.
+function peakTime(m) { const t = m * 60000; return Number.isInteger(m) ? hhmm(t) : `${hhmm(t)}:${pad(new Date(t).getSeconds())}`; }
+
+function drawPeak(ctx, X, Y, text, above, color, C, yTop, yBottom, xRight) {
+  ctx.fillStyle = color; ctx.strokeStyle = C.surface; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(X, Y, 4, 0, 7); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = C.ink; ctx.textBaseline = "middle";
+  const w = ctx.measureText(text).width, right = X + 8 + w <= xRight;
+  ctx.textAlign = right ? "left" : "right";
+  const ty = Math.min(Math.max(Y + (above ? -11 : 11), yTop + 7), yBottom - 7);
+  ctx.fillText(text, right ? X + 8 : X - 8, ty);
+}
+
+function chartHover(ev) {
+  const g = chart.geom, cv = $("chart"), tip = $("tip");
+  if (!g || !chart.recs.length) return;
+  const rect = cv.getBoundingClientRect();
+  const px = ev.clientX - rect.left;
+  const t = g.t0 + (px - g.L) / (g.W - g.L - g.R) * (g.now - g.t0);
+  const m = t / 60000;
+  let best = null;
+  for (const r of chart.recs) if (best == null || Math.abs(r[0] - m) < Math.abs(best[0] - m)) best = r;
+  if (!best || Math.abs(best[0] - m) > 10 || px < g.L) { chartLeave(); return; }
+  chart.hover = best;
+  drawChart();
+  const rows = [
+    [css("--series-v"), `${best[1].toFixed(2)} V`, "battery"],
+    [css("--series-a"), `${best[4] > 0 ? "+" : ""}${fmt(best[4])} A`, "net current"],
+  ];
+  tip.replaceChildren(Object.assign(document.createElement("div"), { textContent: fmtDT(best[0] * 60000) }),
+    ...rows.map(([c, v, l]) => {
+      const row = document.createElement("div"); row.className = "row";
+      const k = document.createElement("span"); k.className = "key"; k.style.background = c;
+      const b = document.createElement("b"); b.textContent = v;
+      const s = document.createElement("span"); s.textContent = l; s.style.color = "var(--color-ink-2)";
+      row.append(k, b, s); return row;
+    }));
+  tip.style.display = "block";
+  const X = g.x(best[0] * 60000);
+  tip.style.left = `${Math.min(X + 12, rect.width - tip.offsetWidth - 4)}px`;
+  tip.style.top = "8px";
+}
+function chartLeave() { chart.hover = null; $("tip").style.display = "none"; drawChart(); }
+
+// 1 h view: every poll since the page opened, minute averages before them.
+function refreshChart() {
+  const t0 = Date.now() - chart.hours * 3600e3, recs = loadRecords(t0);
+  const live = chart.hours === 1 ? chart.live.filter(r => r[0] * 60000 >= t0) : [];
+  chart.recs = live.length ? [...recs.filter(r => r[0] + 1 <= live[0][0]), ...live] : recs;
+  drawChart();
+}
+
+function setRange(h) {
+  chart.hours = CHART_TICK_MS[h] ? h : 1;
+  lsSet(LS.chartH, chart.hours);
+  for (const b of $("ranges").children) b.setAttribute("aria-pressed", String(+b.dataset.h === chart.hours));
+  $("chart").setAttribute("aria-label", `Battery voltage and net battery current, last ${chart.hours} h`);
+  chart.hover = null; $("tip").style.display = "none";
+  refreshChart();
+}
+
+// ---------- CSV ----------
+function download(name, text) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type: "text/csv" }));
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+const csv = rows => rows.map(r => r.map(c => c == null ? "" : /[",\n]/.test(String(c)) ? `"${String(c).replace(/"/g, '""')}"` : c).join(",")).join("\n") + "\n";
+const stamp = () => dayKey(Date.now());
+
+function exportLog() {
+  flushBucket();
+  const rows = [["time_local", "epoch_s", "batt_v_avg", "batt_v_min", "batt_v_max", "net_a_avg", "ah_in", "ah_out", "solar_wh", "load_wh", "lvd", "stage", "samples", "net_a_min", "net_a_max"]];
+  for (const r of loadRecords(0)) rows.push([fmtDT(r[0] * 60000), r[0] * 60, ...r.slice(1, 10), STAGES[r[10]] ?? r[10], r[11], r[12] ?? "", r[13] ?? ""]);
+  download(`epever-log-${stamp()}.csv`, csv(rows));
+}
+function exportDays() {
+  const rows = [["day", "ah_in", "ah_out", "solar_wh", "load_wh", "solar_ah", "load_ah", "lowest_v", "lowest_at", "highest_v", "highest_at", "lvd_minutes", "logged_minutes"]];
+  for (const d of dailySummaries()) rows.push([d.day, d.ain.toFixed(2), d.aout.toFixed(2), d.ws.toFixed(1), d.wl.toFixed(1), d.as.toFixed(2), d.al.toFixed(2), d.lo, d.loT && hhmm(d.loT), d.hi, d.hiT && hhmm(d.hiT), d.lvdMin, d.minutes]);
+  download(`epever-daily-${stamp()}.csv`, csv(rows));
+}
+function exportSnaps() {
+  const rows = [["connected_local", "gen_total_kwh", "cons_total_kwh", "batt_v", "off_from_local", "off_generated_wh", "off_consumed_wh", "batt_v_before"]];
+  for (const s of snaps) rows.push([fmtDT(s.t), s.genTotal, s.consTotal, s.batV, s.offFrom && fmtDT(s.offFrom), s.genWh, s.consWh, s.vFrom]);
+  download(`epever-snapshots-${stamp()}.csv`, csv(rows));
+}
+
+// ---------- connection lifecycle ----------
+let link = null, pollTimer = null, polling = false, lastClockRead = 0, firstSample = true, failStreak = 0, lastDaysMinute = null;
+
+function setStatus(on, text) {
+  $("dot").classList.toggle("on", on);
+  $("status").lastChild.textContent = text;
+  $("connect").hidden = on;
+  $("disconnect").hidden = !on;
+  renderCharging(); renderCycle();
+}
+
+function explainOpenError(e) {
+  const name = e?.name ?? "", m = e?.message ?? String(e);
+  if (name === "NotFoundError") return "No port selected.";
+  if (name === "InvalidStateError") return "The port is already open, probably in another tab or window of this page. Close it there first.";
+  if (name === "SecurityError") return `Web Serial was blocked (${m}). Open this file directly in Chrome/Chromium (file:// is fine); it doesn't work inside sandboxed frames.`;
+  if (name === "NetworkError" || /Failed to open/i.test(m)) return [
+    "The browser couldn't open the serial port (Linux refused it). Usual causes, most likely first:",
+    "1. No permission: your user must be in the “dialout” group in the CURRENT login session. Check with `id -Gn` in a terminal. If “dialout” is missing there but `id -Gn $USER` shows it, you were added after logging in: log out fully and back in (or reboot), then restart the browser.",
+    "2. Sandboxed browser: a Flatpak or Snap Chromium can't see /dev/ttyUSB*. Use the distribution's RPM (zypper) / Google's RPM, or for Flatpak run `flatpak override --user --device=all <app-id>`; for Snap `sudo snap connect chromium:raw-usb`.",
+    "3. Port busy: another program has it open (another tab, a Python script, minicom). ModemManager can also probe a freshly plugged adapter for a few seconds. Check with `fuser -v /dev/ttyUSB0` (run as root to see system services).",
+  ].join("\n");
+  return `Couldn't open the port: ${name} ${m}`;
+}
+
+function explainPollError(e) {
+  if (e instanceof ModbusError && e.kind === "timeout") return [
+    "Port is open but the controller doesn't answer.",
+    "• Is the RJ45 plugged into the controller's COM port (not a battery-temperature or remote-meter socket) and is the controller powered?",
+    "• RS485 direction: this page switches it via RTS. If replies still never arrive, run `uv run epever_probe.py` (next to this file) once: it turns on the cable's automatic RS485 mode, which lasts until the cable is unplugged.",
+    "• Settings assumed: 115200 baud 8N1, Modbus slave ID 1.",
+  ].join("\n");
+  if (e instanceof ModbusError && e.kind === "garbled") return `${e.message}. Usually electrical noise or a loose RJ45; it will keep retrying.`;
+  if (e instanceof ModbusError && e.kind === "exception") return `Controller rejected a read: ${e.message}. This register map may not match this controller model.`;
+  return `Read failed: ${e?.name ?? ""} ${e?.message ?? e}`;
+}
+
+async function connect(port) {
+  if (link) return;
+  clearMsg("open");
+  try {
+    const allowed = port ? [] : await navigator.serial.getPorts();
+    port ??= allowed.length === 1 ? allowed[0] : await navigator.serial.requestPort();
+  } catch (e) { showMsg("open", e.name === "NotFoundError" ? "info" : "err", explainOpenError(e)); return; }
+  const l = new Link(port);
+  try { await l.open(); }
+  catch (e) { showMsg("open", "err", explainOpenError(e)); return; }
+  link = l;
+  firstSample = true;
+  failStreak = 0;
+  lastClockRead = 0;
+  setStatus(true, "Connected, reading…");
+  await readConfig();
+  schedulePoll(0);
+}
+
+async function readConfig() {
+  try { state.cfg = decodeCfg(await link.read(...BLOCKS.cfg)); }
+  catch (e) { if (link) showMsg("poll", "err", explainPollError(e)); return; }
+  const x = {};
+  for (const [k, blk] of Object.entries(CFG_EXTRA)) {
+    if (!link) return;
+    try { x[k] = await link.read(...blk); } catch {}
+  }
+  Object.assign(state.cfg, decodeCfgExtra(x));
+  saveState();
+  renderCtl();
+}
+
+async function disconnect(reason) {
+  clearTimeout(pollTimer);
+  pollTimer = null;
+  flushBucket();
+  const l = link;
+  link = null;
+  if (l) await l.close();
+  setStatus(false, reason ?? "Not connected");
+}
+
+function schedulePoll(ms) { clearTimeout(pollTimer); pollTimer = setTimeout(poll, ms); }
+
+async function poll() {
+  if (!link || polling) return;
+  polling = true;
+  const started = Date.now();
+  try {
+    const b = {};
+    for (const k of ["rt", "st", "stats"]) b[k] = await link.read(...BLOCKS[k]);
+    const s = decode(b);
+    if (firstSample) { recordSnapshot(s); renderSnaps(); firstSample = false; }
+    ingest(s);
+    live = s;
+    chart.live.push([s.t / 60000, s.batV, s.batV, s.batV, s.netA]);
+    queueRaw(s);
+    while (chart.live[0][0] < s.t / 60000 - 60) chart.live.shift();
+    await checkCycle(s);
+    trackRest(s);
+    if (Date.now() - lastClockRead > CLOCK_CHECK_MS) {
+      lastClockRead = Date.now();
+      checkClock(decodeClock(await link.read(...BLOCKS.clock)));
+    }
+    failStreak = 0;
+    clearMsg("poll");
+    const { faults, warns } = statusIssues(s);
+    if (faults.length) showMsg("faults", "err", `Controller reports:\n• ${faults.join("\n• ")}`); else clearMsg("faults");
+    if (warns.length) showMsg("warns", "warn", `• ${warns.join("\n• ")}`); else clearMsg("warns");
+    setStatus(true, `Updated ${hhmm(s.t)}:${pad(new Date(s.t).getSeconds())}`);
+    renderLive(); renderCtl(); refreshChart(); renderCharging(); renderCycle();
+    const minute = Math.floor(s.t / 60000);
+    if (minute !== lastDaysMinute) { lastDaysMinute = minute; renderDays(); }
+  } catch (e) {
+    if (!link) return;
+    failStreak++;
+    if (e?.name === "NetworkError" || e?.name === "NotFoundError" || e?.kind === "closed") {
+      await disconnect("Disconnected");
+      showMsg("poll", "err", "Lost the serial port (cable unplugged?). It will reconnect automatically when plugged back in, or press Connect.");
+      return;
+    }
+    if (failStreak >= 2) showMsg("poll", "err", explainPollError(e));
+    setStatus(true, `Connected, last read failed (${failStreak}×)`);
+  } finally {
+    polling = false;
+    if (link) schedulePoll(Math.max(0, POLL_MS - (Date.now() - started)));
+  }
+}
+
+// ---------- solar charging switch (the page's only write) ----------
+let armOffUntil = 0;  // first click arms "off", second click within 4 s confirms
+
+function renderCharging() {
+  const b = $("charging"), off = state.chargingOffAt != null;
+  b.hidden = !link;
+  b.classList.toggle("off", off);
+  b.textContent = off ? "Solar charging off: turn on"
+    : performance.now() < armOffUntil ? "Click again to turn charging OFF" : "Solar charging: ON";
+  if (!off) { clearMsg("charging"); return; }
+  const c = state.cycle;
+  const lines = [c
+    ? `Conditioning discharge running (cycle ${(state.cycleLog?.length ?? 0) + 1}): solar charging is OFF since ${fmtDT(c.startedAt)}. ` +
+      `It turns back on at ${fmt(c.targetAh, 0)} Ah out or ${fmt(c.floorV, 1)} V, whichever comes first; closing the laptop keeps it off, the page finishes when reopened.`
+    : `Solar charging is switched OFF (by this page, ${fmtDT(state.chargingOffAt)}). It stays off until you turn it on.`];
+  if (live) {
+    const cap = state.cfg?.capacityAh;
+    lines.push(`Battery ${fmt(live.batV)} V, ${fmt(state.deficitAh ?? 0, 1)} Ah out since last full charge` +
+      (cap && !c ? ` (half of the ${cap} Ah setting = ${cap / 2} Ah)` : "") + ".");
+    if (live.chgA > 0.3) lines.push(`But the controller is charging (${fmt(live.chgA)} A): it ignored the command, or charging was switched on elsewhere.`);
+  }
+  showMsg("charging", "warn", lines.join("\n"));
+}
+
+async function toggleCharging() {
+  if (!link) return;
+  const off = state.chargingOffAt != null;
+  if (off) { await (state.cycle ? endCycle("manual") : switchCharging(true)); return; }
+  if (performance.now() >= armOffUntil) {
+    armOffUntil = performance.now() + 4000;
+    renderCharging();
+    setTimeout(renderCharging, 4100);
+    return;
+  }
+  armOffUntil = 0;
+  await switchCharging(false);
+}
+
+async function switchCharging(on) {
+  if (!link) return false;
+  $("charging").disabled = true;
+  try {
+    await link.setCharging(on);
+    state.chargingOffAt = on ? null : Date.now();
+    saveState();
+    clearMsg("chgerr");
+    return true;
+  } catch (e) {
+    showMsg("chgerr", "err", `Couldn't switch solar charging ${on ? "on" : "off"}: ${e.message}`);
+    return false;
+  } finally {
+    $("charging").disabled = false;
+    renderCharging();
+  }
+}
+
+// ---------- capacity from resting voltage ----------
+// Green Cell CAV table, resting 15 min without load or charge. 70 % and 90 % share 13.3 V, hence two bounds.
+const REST_TABLE_LO = [[9.5, 0], [10.8, 1], [12.8, 10], [12.9, 20], [13.0, 30], [13.1, 40], [13.3, 70], [13.4, 99], [13.5, 100]];
+const REST_TABLE_HI = [[9.5, 0], [10.8, 1], [12.8, 10], [12.9, 20], [13.0, 30], [13.1, 40], [13.3, 90], [13.4, 99], [13.5, 100]];
+const REST_MIN = 15;            // minutes without current before a reading counts (manual)
+const REST_MAX_A = 0.15;        // |net| and load current still counted as rest
+const SOC_SLACK = 3;            // ± % for a "reference only" table and 10 mV readings
+const CAP_MAX_SPREAD = 1.3;     // max/min estimate ratio above which the reading is too flat to use
+let restSince = null;
+
+function socAt(table, v) {
+  if (v <= table[0][0]) return 0;
+  for (let k = 1; k < table.length; k++) {
+    const [v0, s0] = table[k - 1], [v1, s1] = table[k];
+    if (v <= v1) return v1 === v0 ? s1 : s0 + (s1 - s0) * (v - v0) / (v1 - v0);
+  }
+  return 100;
+}
+
+// Each poll: after REST_MIN minutes at rest, keep this rest's latest voltage with the Ah out since the last full charge.
+function trackRest(s) {
+  const resting = Math.abs(s.netA) <= REST_MAX_A && s.chgA < 0.05 && s.loadA <= REST_MAX_A;
+  if (!resting) { restSince = null; return; }
+  restSince ??= s.t;
+  if (s.t - restSince < REST_MIN * 60000 || state.approx || state.deficitAh == null) return;
+  const pts = state.restPoints ??= [];
+  const pt = { t: s.t, restSince, v: s.batV, ahOut: state.deficitAh, fullAt: state.lastFullAt };
+  if (pts.at(-1)?.restSince === restSince) pts[pts.length - 1] = pt; else pts.push(pt);
+  if (pts.length > 20) pts.shift();
+  saveState();
+}
+
+// Full charge (exactly 100 %) to the latest resting reading: capacity = Ah out ÷ (1 − SoC at that voltage).
+function capacityText() {
+  const p = state.restPoints?.at(-1);
+  if (!p) return "Capacity: no resting reading yet. The page takes one when the battery rests 15 min (no charging, load under 0.15 A, e.g. fridge and laptop off); at 13.0 V or lower it gives a usable number.";
+  const lo = Math.max(0, socAt(REST_TABLE_LO, p.v) - SOC_SLACK), hi = Math.min(99, socAt(REST_TABLE_HI, p.v) + SOC_SLACK);
+  const mid = (socAt(REST_TABLE_LO, p.v) + socAt(REST_TABLE_HI, p.v)) / 2;
+  const cMin = p.ahOut / (1 - lo / 100), cMax = p.ahOut / (1 - hi / 100);
+  const where = `rest at ${fmt(p.v)} V, ${fmt(p.ahOut, 1)} Ah after the full charge of ${fmtDT(p.fullAt)} (${fmtDT(p.t)})`;
+  if (p.ahOut < 5 || cMax / cMin > CAP_MAX_SPREAD)
+    return `Capacity: last ${where}. The voltage curve is too flat there to tell; a rest at 13.0 V or lower gives a usable number.`;
+  return `Capacity ≈ ${fmt(p.ahOut / (1 - mid / 100), 0)} Ah (${fmt(cMin, 0)}–${fmt(cMax, 0)}), from a ${where}.`;
+}
+
+// ---------- conditioning cycle ----------
+// Green Cell CAV manual, insufficient capacity: "charge fully and discharge the battery to 50% SOC in 3–5 cycles".
+const CYCLE_FRACTION = 0.5;      // of the capacity setting
+const CYCLE_FLOOR_V = 12.9;      // ≈20 % at rest (Green Cell table); under load it reads low, so it trips early, never late
+const CYCLE_FLOOR_POLLS = Math.ceil(15000 / POLL_MS);  // 15 s straight at/below the floor; ignores compressor start dips
+const CYCLE_START_MAX_AH = 2;    // start only this close to a confirmed full charge
+const CYCLE_ENDS = { target: "target reached", floor: "voltage floor", manual: "you" };
+let floorHits = 0;
+
+function cycleBlocker() {
+  if (state.cycle) return null;
+  if (!link) return "Connect to start a cycle.";
+  if (!state.cfg?.capacityAh) return "Waiting for the controller settings.";
+  if (state.approx || state.deficitAh == null || state.deficitAh > CYCLE_START_MAX_AH)
+    return "Waiting for a full charge (float stage), so the Ah count starts from zero.";
+  return null;
+}
+
+async function startCycle() {
+  if (cycleBlocker() || state.cycle) return;
+  if (!await switchCharging(false)) return;
+  state.cycle = { startedAt: Date.now(), startAh: state.deficitAh, targetAh: state.cfg.capacityAh * CYCLE_FRACTION, floorV: CYCLE_FLOOR_V, minV: live?.batV ?? null };
+  floorHits = 0;
+  saveState();
+  renderCharging(); renderCycle();
+}
+
+async function endCycle(reason) {
+  const c = state.cycle;
+  if (!await switchCharging(true)) return;  // retried on the next poll
+  (state.cycleLog ??= []).push({ start: c.startedAt, end: Date.now(), ahOut: state.deficitAh - c.startAh, minV: c.minV, reason, approx: state.approx });
+  state.cycle = null;
+  saveState();
+  renderCharging(); renderCycle();
+}
+
+// Each poll, after ingest(): end the cycle at the target or the floor (also right after reopening the page).
+async function checkCycle(s) {
+  const c = state.cycle;
+  if (!c) return;
+  if (c.minV == null || s.batV < c.minV) c.minV = s.batV;
+  floorHits = s.batV <= c.floorV ? floorHits + 1 : 0;
+  if (state.deficitAh - c.startAh >= c.targetAh) await endCycle("target");
+  else if (floorHits >= CYCLE_FLOOR_POLLS) await endCycle("floor");
+}
+
+function renderCycle() {
+  const c = state.cycle, blocker = cycleBlocker();
+  $("cycle-start").disabled = !!c || !!blocker;
+  $("cycle-status").textContent = c
+    ? `Running since ${fmtDT(c.startedAt)}: ${fmt(state.deficitAh - c.startAh, 1)} of ${fmt(c.targetAh, 0)} Ah out.`
+    : blocker ?? "Ready: the battery is full.";
+  const log = state.cycleLog ?? [];
+  const done = log.filter(r => r.reason !== "manual").length;
+  $("cycle-count").textContent = `Cycles done: ${done} (manual: 3 to 5)` + (log.length > done ? `, plus ${log.length - done} stopped early by you.` : ".");
+  $("capacity").textContent = capacityText();
+  table($("cycles"), ["#", "Started", "Ended", "Ah out", "Lowest V", "Ended by", "≈ capacity"],
+    log.map((r, i) => [String(i + 1), fmtDT(r.start), fmtDT(r.end), fmt(r.ahOut, 1) + (r.approx ? " (approx.)" : ""), fmt(r.minV),
+      CYCLE_ENDS[r.reason] ?? r.reason, r.reason === "floor" ? `${fmt(r.ahOut / 0.8, 0)} Ah` : "—"]).reverse());
+}
+
+// ---------- startup ----------
+function init() {
+  $("connect").onclick = () => connect();
+  $("disconnect").onclick = () => disconnect();
+  $("charging").onclick = toggleCharging;
+  $("cycle-start").onclick = startCycle;
+  $("csv-log").onclick = exportLog;
+  $("csv-days").onclick = exportDays;
+  $("csv-snaps").onclick = exportSnaps;
+  const cv = $("chart");
+  $("ranges").onclick = e => { if (e.target.dataset?.h) setRange(+e.target.dataset.h); };
+  cv.addEventListener("pointermove", chartHover);
+  cv.addEventListener("pointerleave", chartLeave);
+  new ResizeObserver(() => drawChart()).observe(cv);
+  document.documentElement.classList.add("js");
+  const stick = () => $("bar").classList.toggle("stuck", $("tiles").getBoundingClientRect().bottom < $("bar").offsetHeight);
+  addEventListener("scroll", stick, { passive: true }); addEventListener("resize", stick); stick();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawChart);
+  addEventListener("pagehide", () => {
+    flushBucket(); saveState();
+    if (RAW_URL && rawPending.length) navigator.sendBeacon(RAW_URL, JSON.stringify(rawPending));
+  });
+
+  renderAh(); renderCtl(); renderDays(); renderSnaps(); setRange(lsGet(LS.chartH, 1)); renderCycle();
+  syncArchive(); loadRaw(); renderStats();
+  setInterval(sendRaw, 10000);
+  setInterval(renderStats, 300000);
+  $("stats-by").onclick = e => { if (e.target.dataset?.by) renderStats(e.target.dataset.by); };
+  if (state.last) $("t-ahd").textContent += `, last logged ${fmtDT(state.last.t)}`;
+
+  if (!("serial" in navigator)) {
+    $("connect").disabled = true;
+    showMsg("open", "err", "This browser has no Web Serial API. Use Chrome or Chromium (desktop) and open this file directly; Firefox and Safari don't support it.");
+    return;
+  }
+  // Reconnect to a port this page was already allowed to use; also on re-plug.
+  navigator.serial.getPorts().then(ps => { if (ps.length === 1 && !link) connect(ps[0]); });
+  navigator.serial.addEventListener("connect", e => { if (!link) connect(e.target); });
+  navigator.serial.addEventListener("disconnect", e => {
+    if (link && e.target === link.port) {
+      disconnect("Disconnected");
+      showMsg("poll", "err", "Serial adapter unplugged. It will reconnect automatically when plugged back in.");
+    }
+  });
+}
+init();
+</script>
+</body>
+</html>

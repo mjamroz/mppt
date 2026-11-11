@@ -1084,8 +1084,9 @@ function drawChart() {
   const C = { ink: css("--color-ink"), ink2: css("--color-ink-2"), muted: css("--color-muted"), grid: css("--color-grid"), axis: css("--color-axis"), surface: css("--color-paper"), v: css("--series-v"), a: css("--series-a") };
   ctx.font = `500 12px ${css("--font-body")}`;
 
-  const now = Date.now(), t0 = now - chart.hours * 3600e3;
   const recs = chart.recs;
+  // Start the axis at the first reading in range (at least 5 min shown), so a short log fills the width.
+  const now = Date.now(), t0 = Math.min(now - 5 * 60000, Math.max(now - chart.hours * 3600e3, (recs[0]?.[0] ?? 0) * 60000));
   const L = 44, R = 12, gapMid = 30, top = 20, bottom = 24;
   const ph = (H - top - bottom - gapMid) / 2;
   const panels = [
@@ -1139,7 +1140,7 @@ function drawChart() {
   }
   // time axis
   ctx.fillStyle = C.muted; ctx.textAlign = "center"; ctx.textBaseline = "top";
-  const step = CHART_TICK_MS[chart.hours], off = new Date(t0).getTimezoneOffset() * 60000;  // ticks on local-time multiples
+  const step = [1, 2, 5, 10, 15, 30, 60, 120, 180].map(m => m * 60000).find(st => (now - t0) / st <= 7) ?? CHART_TICK_MS[24], off = new Date(t0).getTimezoneOffset() * 60000;  // ticks on local-time multiples
   for (let t = Math.ceil((t0 - off) / step) * step + off; t <= now; t += step) {
     const X = x(t);
     ctx.strokeStyle = C.grid; ctx.lineWidth = 1;

@@ -1,0 +1,2 @@
+# EPEver USB-RS485 cable (Exar XR21B1411): start the user's epever-worker.service when plugged in.
+ACTION=="add", SUBSYSTEM=="tty", ATTRS{idVendor}=="04e2", ATTRS{idProduct}=="1411", TAG+="systemd", ENV{SYSTEMD_USER_WANTS}+="epever-worker.service"

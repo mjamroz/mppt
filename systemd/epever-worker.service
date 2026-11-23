@@ -1,0 +1,16 @@
+# User service: reads the controller into epever.db. Started by 99-epever.rules when the cable is plugged
+# in, and at login only if it is already plugged in (booting with it in sends no plug event to the user's
+# systemd). Exits by itself when the cable is unplugged (see install.sh).
+[Unit]
+Description=EPEver controller reader (USB RS485 cable)
+Wants=epever-server.service
+ConditionPathExistsGlob=/dev/serial/by-id/usb-Exar_Corp._XR21B1411_*
+
+[Service]
+WorkingDirectory=%h/WORK/mppt
+ExecStart=/usr/bin/uv-3.13 run --quiet epever_worker.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,12 @@
+# User service: the monitor page and epever.db on http://127.0.0.1:8765 (see install.sh).
+[Unit]
+Description=EPEver monitor server (127.0.0.1:8765)
+
+[Service]
+WorkingDirectory=%h/WORK/mppt
+ExecStart=/usr/bin/uv-3.13 run --quiet epever_server.py 8765
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

@@ -39,7 +39,7 @@
   --color-plate: oklch(16% 0.014 262); --color-plate-edge: oklch(16% 0.014 262); --color-plate-rule: oklch(30% 0.014 262);
   --color-plate-ink: oklch(95.5% 0.006 250); --color-plate-muted: oklch(74% 0.012 255);
   --color-grid: oklch(87% 0.008 250); --color-axis: oklch(62% 0.012 255);
-  --series-v: oklch(51% 0.22 264); --series-a: oklch(60% 0.15 62);
+  --series-bat: oklch(16% 0.014 262); --series-sun: oklch(51% 0.22 264); --series-load: oklch(60% 0.15 62);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -53,7 +53,7 @@
     --color-plate: oklch(10.5% 0.012 262); --color-plate-edge: oklch(31% 0.014 262); --color-plate-rule: oklch(25% 0.014 262);
     --color-plate-ink: oklch(96% 0.005 250); --color-plate-muted: oklch(70% 0.012 255);
     --color-grid: oklch(24% 0.013 262); --color-axis: oklch(46% 0.014 260);
-    --series-v: oklch(66% 0.18 264); --series-a: oklch(80% 0.15 75);
+    --series-bat: oklch(93% 0.005 250); --series-sun: oklch(66% 0.18 264); --series-load: oklch(80% 0.15 75);
   }
 }
 :root[data-theme="dark"] {
@@ -67,7 +67,7 @@
   --color-plate: oklch(10.5% 0.012 262); --color-plate-edge: oklch(31% 0.014 262); --color-plate-rule: oklch(25% 0.014 262);
   --color-plate-ink: oklch(96% 0.005 250); --color-plate-muted: oklch(70% 0.012 255);
   --color-grid: oklch(24% 0.013 262); --color-axis: oklch(46% 0.014 260);
-  --series-v: oklch(66% 0.18 264); --series-a: oklch(80% 0.15 75);
+  --series-bat: oklch(93% 0.005 250); --series-sun: oklch(66% 0.18 264); --series-load: oklch(80% 0.15 75);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -129,7 +129,9 @@ button.off, button.off:hover { background: var(--color-amber); color: var(--colo
 
 /* messages: a sign, not a toast */
 #messages:not(:empty) { display: grid; gap: var(--space-sm); margin-top: var(--space-lg); }
-.msg { padding: var(--space-sm) var(--space-md); white-space: pre-line; border: var(--rule-bar) solid; font-size: var(--text-sm); }
+.msg { display: flex; align-items: flex-start; gap: var(--space-md); padding: var(--space-sm) var(--space-md); white-space: pre-line; border: var(--rule-bar) solid; font-size: var(--text-sm); }
+.msg > span { flex: 1; min-width: 0; }
+.msg .msg-close, .msg .msg-close:hover { min-height: 32px; flex: none; color: inherit; border-color: currentColor; background: transparent; }
 .msg.warn { background: var(--color-amber); color: var(--color-on-amber); border-color: var(--color-amber); }
 .msg.err { background: var(--color-paper-3); color: var(--color-ink); border-color: var(--color-error); }
 .msg.info { background: var(--color-paper-3); color: var(--color-ink); border-color: var(--color-accent); }
@@ -147,6 +149,14 @@ button.off, button.off:hover { background: var(--color-amber); color: var(--colo
 .tile-lead .v { font-size: clamp(2.5rem, 2rem + 2vw, 3.75rem); }
 .tile-lead .v small { font-size: var(--text-lg); }
 .tile .d { font-size: var(--text-sm); color: var(--color-plate-ink); opacity: 0.86; }
+/* range gauge: lowest to highest seen, a fill and a marker gliding to the current value */
+.gauge { margin-top: var(--space-sm); }
+.g-track { position: relative; height: 6px; background: var(--color-plate-rule); }
+.g-fill { position: absolute; inset: 0; background: var(--color-amber); opacity: 0.35; transform-origin: left center; transform: scaleX(0); transition: transform 0.8s cubic-bezier(.2, .7, .2, 1); }
+.g-pos { position: absolute; inset: 0; pointer-events: none; transition: transform 0.8s cubic-bezier(.2, .7, .2, 1); }
+.g-pos i { position: absolute; left: -1.5px; top: -5px; width: 3px; height: 16px; background: var(--color-amber); }
+.g-tick { position: absolute; top: -3px; width: 1px; height: 12px; background: var(--color-plate-muted); }
+.g-ends { display: flex; justify-content: space-between; gap: var(--space-xs); margin-top: var(--space-2xs); font-size: var(--text-xs); color: var(--color-plate-muted); white-space: nowrap; }
 
 /* blocks: a 2px ink rule over each, no boxes */
 .block { margin-top: var(--block-gap); padding-top: var(--space-md); border-top: var(--rule-bar) solid var(--color-ink); }
@@ -160,7 +170,7 @@ button.off, button.off:hover { background: var(--color-amber); color: var(--colo
 .kv span:last-child { text-align: right; font-weight: 500; }
 
 .chartwrap { position: relative; }
-canvas { display: block; width: 100%; height: 360px; touch-action: none; }
+canvas { display: block; width: 100%; height: 420px; touch-action: none; }
 .tip {
   position: absolute; z-index: 600; display: none; pointer-events: none; white-space: nowrap;
   padding: var(--space-xs) var(--space-sm); font-size: var(--text-sm);
@@ -182,6 +192,7 @@ td.na { color: var(--color-muted); }
 .row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-sm) var(--space-md); margin-top: var(--space-md); }
 .note { margin-top: var(--space-xs); color: var(--color-ink-2); font-size: var(--text-sm); }
 #cycle-count { margin-top: var(--space-md); font-weight: 500; }
+#capacity { white-space: pre-line; }
 
 details.about { margin-top: var(--space-sm); }
 details.about summary, .settings summary { cursor: pointer; width: fit-content; }
@@ -200,17 +211,18 @@ details.about summary:hover, .settings summary:hover h2 { text-decoration: under
   :root { --gutter: 24px; --block-gap: 48px; }
   .now { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .now .tile:last-child { grid-column: 1 / -1; }
-  canvas { height: 320px; }
+  canvas { height: 380px; }
 }
 @media (max-width: 40rem) {
   :root { --gutter: 16px; --block-gap: 40px; }
   .tile { padding: var(--space-sm) var(--space-md) var(--space-md); }
   .tile-lead .v { font-size: 2.25rem; }
   .tile .v { font-size: var(--text-xl); }
-  canvas { height: 300px; }
+  canvas { height: 360px; }
   button { min-height: 44px; }
   .mini span:nth-child(n+3) { display: none; }
 }
+@media (prefers-reduced-motion: reduce) { .g-fill, .g-pos { transition: none; } }
 @media (prefers-reduced-motion: reduce) { button:active, .js .bar .mini span, .js .bar.stuck h1 { transform: none; } .brand > *, .mini span { transition: none; } }
 </style>
 </head>
@@ -242,15 +254,15 @@ details.about summary:hover, .settings summary:hover h2 { text-decoration: under
     <div class="cardhead">
       <h2>History</h2>
       <div class="seg" id="ranges" role="group" aria-label="Chart range">
-        <button type="button" class="secondary" data-h="1">1 h</button><button type="button" class="secondary" data-h="6">6 h</button><button type="button" class="secondary" data-h="24">24 h</button>
+        <button type="button" class="secondary" data-h="0.25">15 min</button><button type="button" class="secondary" data-h="1">1 h</button><button type="button" class="secondary" data-h="6">6 h</button><button type="button" class="secondary" data-h="24">24 h</button>
       </div>
     </div>
     <div class="chartwrap">
-      <canvas id="chart" aria-label="Battery voltage and net battery current, last 1 h" role="img"></canvas>
+      <canvas id="chart" aria-label="Battery and panel voltage, load and solar charging current, last 1 h" role="img"></canvas>
       <div class="tip" id="tip"></div>
     </div>
     <details class="about"><summary>How the chart is drawn</summary>
-      <p class="note">1 h: every reading (about 3 a second; stored in epever.db when the page runs from epever_monitor.sh), one-minute averages where none. 6 h and 24 h: one-minute averages. Gaps are times the page wasn’t logging.</p>
+      <p class="note">15 min and 1 h: every reading (about 3 a second; stored in epever.db when the page runs from epever_monitor.sh), one-minute averages where none. 6 h and 24 h: one-minute averages; there solar charging and load current are each minute’s mean, and panel voltage is missing (it is kept only per reading). Both panels zoom to the data shown; the labels mark the highest and lowest value of every line. Gaps are times the page wasn’t logging.</p>
     </details>
   </section>
 
@@ -385,14 +397,28 @@ function lsSet(k, v) {
 
 // ---------- messages ----------
 const msgs = new Map();
-function showMsg(id, kind, text) { msgs.set(id, { kind, text }); renderMsgs(); }
+const HIDEABLE = new Set(["faults", "warns"]);  // controller reports: hidden until their text changes
+const hiddenMsgs = new Map();
+function showMsg(id, kind, text) {
+  const m = msgs.get(id);
+  if (m?.kind === kind && m.text === text) return;
+  msgs.set(id, { kind, text }); renderMsgs();
+}
 function clearMsg(id) { if (msgs.delete(id)) renderMsgs(); }
 function renderMsgs() {
   const box = $("messages");
-  box.replaceChildren(...[...msgs.values()].map(({ kind, text }) => {
+  box.replaceChildren(...[...msgs].filter(([id, { text }]) => hiddenMsgs.get(id) !== text).map(([id, { kind, text }]) => {
     const el = document.createElement("div");
     el.className = `msg ${kind}`;
-    el.textContent = text;
+    const body = document.createElement("span");
+    body.textContent = text;
+    el.append(body);
+    if (HIDEABLE.has(id)) {
+      const b = Object.assign(document.createElement("button"), { type: "button", className: "secondary msg-close", textContent: "Hide" });
+      b.setAttribute("aria-label", "Hide this report until it changes");
+      b.onclick = () => { hiddenMsgs.set(id, text); renderMsgs(); };
+      el.append(b);
+    }
     return el;
   }));
 }
@@ -409,6 +435,46 @@ function crc16(bytes) {
 
 class ModbusError extends Error {
   constructor(kind, message) { super(message); this.kind = kind; }
+}
+
+// epever_worker.py owns the port and keeps the latest blocks in epever.db; this reads them through the server,
+// with Link's interface. Blocks are fetched once per poll (when rt is asked for); stale ones count as a lost port.
+const SERVER_FRESH_MS = 5000;
+class ServerLink {
+  pollMs = 1000;  // the worker logs every 1/3 s; the page only needs to show it
+  regs = new Map();
+  async refresh() {
+    const { regs, cap } = await (await fetch("/api/regs", { cache: "no-store" })).json();
+    this.regs = new Map(regs.map(r => [`${r.fc}:${r.addr}:${r.n}`, r]));
+    this.cap = cap;
+  }
+  fresh() { const r = this.regs.get(`${BLOCKS.rt.join(":")}`); return !!r && Date.now() - r.t < SERVER_FRESH_MS; }
+  async read(fc, addr, count) {
+    if (fc === BLOCKS.rt[0] && addr === BLOCKS.rt[1]) await this.refresh();
+    const r = this.regs.get(`${fc}:${addr}:${count}`);
+    if (!r) throw new ModbusError("timeout", "epever_worker.py has no reading of this block");
+    if (fc === 4 && Date.now() - r.t > SERVER_FRESH_MS) throw new ModbusError("closed", "epever_worker.py stopped reading");
+    return r.vals;
+  }
+  async setCharging(on) {
+    const res = await fetch("/api/charging", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ on }) });
+    const { result } = await res.json();
+    if (result !== "ok") throw new Error(`epever_worker.py: ${result}`);
+  }
+  async close() {}
+}
+const serverMode = () => link instanceof ServerLink;
+const NO_SERIAL_MSG = "No reading from epever_worker.py (is the cable plugged in?), and this browser has no Web Serial API to read the cable itself. The page connects as soon as the worker reads; reading directly needs Chrome or Chromium.";
+let autoServer = true;  // off after Disconnect, until Connect
+
+// Use the worker's readings when they are fresh; true if it did.
+async function connectServer() {
+  if (link || !ARCHIVE_URL) return false;
+  const l = new ServerLink();
+  try { await l.refresh(); } catch { return false; }
+  if (!l.fresh() || link) return false;
+  await useLink(l);
+  return true;
 }
 
 const EXC = { 1: "illegal function", 2: "illegal data address", 3: "illegal data value", 4: "device failure", 6: "device busy" };
@@ -622,8 +688,10 @@ function statusIssues(s) {
   if (pv === 3) faults.add("PV input voltage error");
   for (const [n, t] of [[13, "Charging MOSFET short circuit"], [12, "Charging or anti-reverse MOSFET open circuit"],
     [11, "Anti-reverse MOSFET short circuit"], [10, "PV input over current"], [9, "Load over current"],
-    [8, "Load short circuit"], [7, "Load MOSFET short circuit"], [4, "PV input short circuit"], [1, "Charging fault"]])
+    [8, "Load short circuit"], [7, "Load MOSFET short circuit"], [4, "PV input short circuit"]])
     if (bit(cs, n)) faults.add(t);
+  // D1 is set whenever the controller charges (seen on Tracer AN and XTRA), so it counts only while idle.
+  if (bit(cs, 1) && s.stage === 0) faults.add("Charging fault");
   const lv = ds >> 14;
   if (lv === 1) warns.add("Load output: input voltage low");
   if (lv === 2) warns.add("Load output: input voltage high");
@@ -664,28 +732,41 @@ function isFull(s) {
   return s.stage === 1 || (s.stage === 2 && s.batV >= fullV && s.netA < FULL_TAIL_A);
 }
 
-function ingest(s) {
-  const prev = state.last;
-  const dt = prev ? (s.t - prev.t) / 1000 : null;
+// Capacity state; epever_worker.py keeps the same fields (track()).
+const CAP_KEYS = ["deficitAh", "approx", "gapMin", "lastFullAt", "ahNet", "ahEpoch", "ahNetGapMin", "restPoints"];
 
-  // Ah since full
+function trackAh(s, prev, dt) {
   if (state.deficitAh == null) { state.deficitAh = 0; state.approx = true; } // unknown start
+  // ahNet: net Ah into the battery since the page first ran, never reset; ahEpoch changes when it can't be continued.
+  state.ahNet ??= 0; state.ahEpoch ??= 0; state.ahNetGapMin ??= 0;
   if (dt != null && dt > 0 && dt <= GAP_S && prev.netA != null && s.netA != null) {
     const ah = (prev.netA + s.netA) / 2 * dt / 3600;
     state.deficitAh = Math.max(0, state.deficitAh - ah);
+    state.ahNet += ah;
   } else if (dt != null && dt > GAP_S) {
     // Gap: estimate net battery energy from lifetime counters (charged − consumed, kWh).
     const dGen = s.genTotal - prev.genTotal, dCons = s.consTotal - prev.consTotal;
     if (Number.isFinite(dGen) && Number.isFinite(dCons) && dGen >= 0 && dCons >= 0) {
       const v = ((prev.batV ?? s.batV) + s.batV) / 2 || 12.8;
       state.deficitAh = Math.max(0, state.deficitAh - (dGen - dCons) * 1000 / v);
-    }
+      state.ahNet += (dGen - dCons) * 1000 / v;
+      state.ahNetGapMin += Math.round(dt / 60);
+    } else state.ahEpoch++;
     state.approx = true;
     state.gapMin += Math.round(dt / 60);
   }
   if (isFull(s)) {
     Object.assign(state, { deficitAh: 0, lastFullAt: s.t, approx: false, gapMin: 0 });
   }
+}
+
+function ingest(s) {
+  const prev = state.last;
+  const dt = prev ? (s.t - prev.t) / 1000 : null;
+
+  // Ah since full; the worker tracks it itself (it sees every reading, page open or not)
+  if (serverMode()) { if (link.cap) for (const k of CAP_KEYS) state[k] = link.cap[k]; }
+  else trackAh(s, prev, dt);
 
   // minute bucket
   const minute = Math.floor(s.t / 60000);
@@ -743,6 +824,7 @@ function flushBucket() {
   } else arr.push(rec);
   lsSet(key, arr);
   pruneOld();
+  recsVer++;
   syncArchive();
 }
 
@@ -765,16 +847,20 @@ function storedDayKeys() {
   return out.sort();
 }
 
+// Stored minute records change only when a minute closes (recsVer), so they are parsed once per minute.
+let recsVer = 0, recsCache = null;
 function loadRecords(sinceMs) {
-  const since = Math.floor(sinceMs / 60000), recs = [];
-  for (const k of storedDayKeys()) {
-    if (k.slice(11) < dayKey(sinceMs)) continue;
-    for (const r of lsGet(k, [])) if (r[0] >= since) recs.push(r);
+  const since = Math.floor(sinceMs / 60000);
+  if (recsCache?.since !== since || recsCache.ver !== recsVer) {
+    const recs = [];
+    for (const k of storedDayKeys()) {
+      if (k.slice(11) < dayKey(sinceMs)) continue;
+      for (const r of lsGet(k, [])) if (r[0] >= since) recs.push(r);
+    }
+    recsCache = { since, ver: recsVer, recs: recs.sort((a, b) => a[0] - b[0]) };
   }
-  if (bucket?.n) { // include the minute in progress
-    const b = bucket;
-    recs.push(bucketRecord(bucket));
-  }
+  const recs = [...recsCache.recs];
+  if (bucket?.n) recs.push(bucketRecord(bucket));  // the minute in progress
   return recs.sort((a, b) => a[0] - b[0]);
 }
 
@@ -811,6 +897,11 @@ function storedRecords(afterMin, beforeMin) {
 
 async function syncArchive() {
   if (!ARCHIVE_URL || archiving) return;
+  if (serverMode()) {  // the worker writes minutes and snapshots; skip what this page logged meanwhile
+    state.archivedMin = Math.max(state.archivedMin ?? 0, (bucket?.m ?? Math.floor(Date.now() / 60000)) - 1);
+    state.archivedSnapT = Math.max(state.archivedSnapT ?? 0, snaps.at(-1)?.t ?? 0);
+    return;
+  }
   archiving = true;
   try {
     const before = bucket?.m ?? Math.floor(Date.now() / 60000);  // minutes before this one are final
@@ -839,8 +930,8 @@ const RAW_MAX_PENDING = 12 * 3600;  // readings kept in memory while the server 
 let rawPending = [], rawSending = false;
 
 function queueRaw(s) {
-  if (!RAW_URL) return;
-  rawPending.push([s.t, s.batV, s.netA, s.loadV, s.loadA, s.pvV, s.chgA]);
+  if (!RAW_URL || serverMode()) return;  // the worker logs raw readings itself
+  rawPending.push([s.t, s.batV, s.netA, s.loadV, s.loadA, s.pvV, s.chgA, s.battStatus, s.chgStatus, s.dischgStatus]);
   if (rawPending.length > RAW_MAX_PENDING) rawPending.splice(0, rawPending.length - RAW_MAX_PENDING);
 }
 
@@ -880,7 +971,7 @@ async function loadRaw() {
   try {
     const rows = await (await fetch(`${RAW_URL}?since=${Date.now() - 3600e3}`)).json();
     const first = chart.live[0]?.[0] ?? Infinity;
-    chart.live = [...rows.map(([t, v, i]) => [t / 60000, v, v, v, i]).filter(r => r[0] < first), ...chart.live];
+    chart.live = [...rows.map(([t, v, i, , loadA, pvV, chgA]) => liveRec(t, v, i, chgA, loadA, pvV)).filter(r => r[0] < first), ...chart.live];
     refreshChart();
   } catch {}
 }
@@ -900,6 +991,55 @@ function kv(el, pairs) {
     d.append(a, b);
     return d;
   }));
+}
+
+// ---------- range gauges: current value within the lowest/highest seen in epever.db (outer 0.1 % ignored) ----------
+const GAUGES = [["t-vbat", "batV", "V"], ["t-net", "netA", "A"], ["t-pv", "chgA", "A"], ["t-load", "loadA", "A"]];
+const GAUGE_LABEL = { batV: "battery", netA: "net battery current", chgA: "solar charging", loadA: "load" };
+let ranges = null;
+
+function initGauges() {
+  for (const [tile, key] of GAUGES) {
+    const g = document.createElement("div");
+    g.className = "gauge"; g.id = `g-${key}`; g.hidden = true; g.setAttribute("role", "img");
+    g.innerHTML = '<div class="g-track"><div class="g-fill"></div><div class="g-pos"><i></i></div></div><div class="g-ends"><span></span><span></span></div>';
+    $(tile).parentElement.append(g);
+  }
+}
+
+async function loadRanges() {
+  if (!ARCHIVE_URL) return;
+  try { ranges = await (await fetch("/api/ranges")).json(); renderGauges(); } catch {}
+}
+
+function renderGauges() {
+  if (!ranges || !live) return;
+  for (const [, key, unit] of GAUGES) {
+    const g = $(`g-${key}`), r = ranges[key], v = live[key];
+    if (!r || v == null) { g.hidden = true; continue; }
+    const lo = Math.min(r[0], v), hi = Math.max(r[1], v), at = x => Math.min(1, Math.max(0, (x - lo) / (hi - lo || 1)));
+    g.hidden = false;
+    g.querySelector(".g-pos").style.transform = `translateX(${(at(v) * 100).toFixed(2)}%)`;
+    const fill = g.querySelector(".g-fill");
+    fill.hidden = key === "netA";  // net: a zero tick instead, the marker shows the side
+    fill.style.transform = `scaleX(${at(v).toFixed(4)})`;
+    const ticks = key === "batV" ? [[state.cfg?.lvd, "low-voltage disconnect"], [state.cfg?.boostV, "boost voltage"]] : key === "netA" ? [[0, "zero"]] : [];
+    const sig = `${lo}|${hi}|${ticks.map(t => t[0]).join()}`;
+    if (g.dataset.sig !== sig) {
+      g.dataset.sig = sig;
+      g.querySelectorAll(".g-tick").forEach(t => t.remove());
+      for (const [x, name] of ticks) {
+        if (x == null || x < lo || x > hi) continue;
+        const t = document.createElement("span");
+        t.className = "g-tick"; t.style.left = `${at(x) * 100}%`; t.title = `${name} ${fmt(x)} ${unit}`;
+        g.querySelector(".g-track").append(t);
+      }
+      const [a, b] = g.querySelectorAll(".g-ends span");
+      a.textContent = `${fmt(lo)} ${unit}`; b.textContent = `${fmt(hi)} ${unit}`;  // lowest, highest (named in aria-label)
+      a.title = "lowest seen"; b.title = "highest seen";
+    }
+    g.setAttribute("aria-label", `${GAUGE_LABEL[key]} ${fmt(v)} ${unit}, between the lowest ${fmt(lo)} and highest ${fmt(hi)} ${unit} seen`);
+  }
 }
 
 function renderLive() {
@@ -1043,7 +1183,18 @@ function table(el, head, rows) {
   el.replaceChildren(thead, ...trs);
 }
 
-function renderDays() {
+// Daily log: per day from epever.db (every logged minute, page open or not); this browser's own log without the server.
+async function renderDays() {
+  if (ARCHIVE_URL) {
+    try {
+      const rows = await (await fetch("/api/stats?by=day")).json();
+      const at = x => x?.[0] == null ? ["—", "—"] : [fmt(x[0]), hhmm(x[1] * 1000)];
+      table($("days"), ["Day", "Ah in", "Ah out", "Solar Ah", "Load Ah", "Lowest V", "at", "Highest V", "at", "LVD min", "Logged"],
+        rows.map(r => [r.period, fmt(r.ahIn, 1), fmt(r.ahOut, 1), fmt(r.ahSolar, 1), fmt(r.ahLoad, 1), ...at(r.vLow), ...at(r.vHigh),
+          String(r.lvdMin), `${fmt(r.minutes / 60, 1)} h`]));
+      return;
+    } catch {}
+  }
   table($("days"),
     ["Day", "Ah in", "Ah out", "Solar Ah", "Load Ah", "Lowest V", "at", "Highest V", "at", "LVD min", "Logged"],
     dailySummaries().map(d => [
@@ -1051,6 +1202,16 @@ function renderDays() {
       fmt(d.lo), d.loT ? hhmm(d.loT) : "—", fmt(d.hi), d.hiT ? hhmm(d.hiT) : "—",
       String(d.lvdMin), `${fmt(d.minutes / 60, 1)} h`,
     ]));
+}
+
+// Snapshots in epever.db (the worker's, or another browser's) join this browser's; not stored locally.
+async function loadSnaps() {
+  if (!ARCHIVE_URL) return;
+  try {
+    const arch = await (await fetch("/api/snaps")).json(), have = new Set(snaps.map(x => x.t));
+    snaps = [...snaps, ...arch.filter(x => !have.has(x.t))].sort((a, b) => a.t - b.t);
+    renderSnaps();
+  } catch {}
 }
 
 function renderSnaps() {
@@ -1064,14 +1225,36 @@ function renderSnaps() {
 }
 
 // ---------- chart (two panels, shared time axis) ----------
-const CHART_TICK_MS = { 1: 10 * 60000, 6: 3600e3, 24: 3 * 3600e3 };
-const chart = { recs: [], hover: null, live: [], hours: 1 };  // live: every poll, last hour, record layout
+const CHART_TICK_MS = { 0.25: 2 * 60000, 1: 10 * 60000, 6: 3600e3, 24: 3 * 3600e3 };
+// pv: epoch minute → mean panel V; minutes: minute records; both from the archive (epever.db)
+const chart = { recs: [], hover: null, live: [], hours: 1, pv: new Map(), minutes: [], pvAt: 0 };  // live: every poll, last hour, record layout
 
 function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
 
 function niceStep(range, target) {
   const raw = range / target, p = 10 ** Math.floor(Math.log10(raw)), f = raw / p;
   return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+}
+
+// Extra series. Live readings carry them at fixed indices past the minute-record layout; minute records
+// give charging and load current as the minute's mean (Wh × 60 ÷ mean battery V) and have no PV voltage.
+const LIVE_CHG = 18, LIVE_LOAD = 19, LIVE_PV = 20;
+const liveRec = (t, batV, netA, chgA, loadA, pvV) =>
+  Object.assign([t / 60000, batV, batV, batV, netA], { [LIVE_CHG]: chgA, [LIVE_LOAD]: loadA, [LIVE_PV]: pvV });
+const chgOf = r => r[LIVE_CHG] ?? (r[7] != null && r[1] > 0 ? r[7] * 60 / r[1] : null);
+const loadOf = r => r[LIVE_LOAD] ?? (r[8] != null && r[1] > 0 ? r[8] * 60 / r[1] : null);
+const PV_DARK_V = 1;  // below this the panels are dark; left off the chart so the voltage axis keeps to the battery
+const pvOf = r => { const v = r[LIVE_PV] ?? chart.pv.get(r[0]); return v >= PV_DARK_V ? v : null; };
+
+function chartPanels(C) {
+  return [
+    { h: 1, unit: "V", label: "Voltage (V)", minSpan: 0.2, series: [
+      { get: r => r[1], color: C.bat, name: "battery", peaks: "V" },
+      { get: pvOf, color: C.sun, name: "panel", peaks: "val" }] },
+    { h: 1, unit: "A", label: "Current (A)", minSpan: 1, zero: true, series: [
+      { get: loadOf, color: C.load, name: "load", peaks: "val" },
+      { get: chgOf, color: C.sun, name: "solar charging", peaks: "val" }] },
+  ];
 }
 
 function drawChart() {
@@ -1081,31 +1264,49 @@ function drawChart() {
   if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, W, H);
-  const C = { ink: css("--color-ink"), ink2: css("--color-ink-2"), muted: css("--color-muted"), grid: css("--color-grid"), axis: css("--color-axis"), surface: css("--color-paper"), v: css("--series-v"), a: css("--series-a") };
+  const C = { ink: css("--color-ink"), ink2: css("--color-ink-2"), muted: css("--color-muted"), grid: css("--color-grid"), axis: css("--color-axis"),
+    surface: css("--color-paper"), bat: css("--series-bat"), sun: css("--series-sun"), load: css("--series-load") };
   ctx.font = `500 12px ${css("--font-body")}`;
 
   const recs = chart.recs;
-  // Start the axis at the first reading in range (at least 5 min shown), so a short log fills the width.
-  const now = Date.now(), t0 = Math.min(now - 5 * 60000, Math.max(now - chart.hours * 3600e3, (recs[0]?.[0] ?? 0) * 60000));
-  const L = 44, R = 12, gapMid = 30, top = 20, bottom = 24;
-  const ph = (H - top - bottom - gapMid) / 2;
-  const panels = [
-    { y: top, col: 1, unit: "V", color: C.v, label: "Battery voltage (V)", fixed: [12, 14.4], dec: 1 },
-    { y: top + ph + gapMid, col: 4, unit: "A", color: C.a, label: "Net battery current (A)", fixed: [-2, 2], dec: 0, zero: true },
-  ];
+  // Start the axis at the first reading in range (at least 1 min shown), so a short log fills the width.
+  const now = Date.now(), t0 = Math.min(now - 60000, Math.max(now - chart.hours * 3600e3, (recs[0]?.[0] ?? 0) * 60000));
+  const L = 44, R = 12, gap = 30, top = 20, bottom = 24;
+  const panels = chartPanels(C);
+  const unitH = (H - top - bottom - gap * (panels.length - 1)) / panels.reduce((a, p) => a + p.h, 0);
+  let yAt = top;
+  for (const p of panels) { p.y = yAt; p.ph = p.h * unitH; yAt += p.ph + gap; }
   const x = t => L + (t - t0) / (now - t0) * (W - L - R);
   chart.geom = { L, R, W, t0, now, x };
 
   for (const p of panels) {
-    let lo = p.fixed[0], hi = p.fixed[1];
-    for (const r of recs) { lo = Math.min(lo, recPeak(r, p.unit, false)[0]); hi = Math.max(hi, recPeak(r, p.unit, true)[0]); }
-    const step = niceStep(hi - lo, 4);
+    const { ph } = p;
+    let lo = Infinity, hi = -Infinity;
+    for (const r of recs) for (const s of p.series) {
+      const v = s.get(r);
+      if (v == null) continue;
+      const [a, b] = s.peaks === "V" ? [recPeak(r, "V", false)[0], recPeak(r, "V", true)[0]] : [v, v];
+      lo = Math.min(lo, a); hi = Math.max(hi, b);
+    }
+    if (lo > hi) { lo = 0; hi = 1; }
+    if (hi - lo < p.minSpan) { const mid = (hi + lo) / 2; lo = mid - p.minSpan / 2; hi = mid + p.minSpan / 2; }
+    const step = niceStep(hi - lo, p.h < 1 ? 2 : 4);
     lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step;
     const y = v => p.y + ph - (v - lo) / (hi - lo) * ph;
     p.yf = y;
 
-    ctx.fillStyle = C.ink2; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+    // title, then a key per series when there is more than one
+    ctx.textBaseline = "bottom"; ctx.textAlign = "left"; ctx.fillStyle = C.ink2;
     ctx.fillText(p.label, L, p.y - 4);
+    if (p.series.length > 1) {
+      let kx = L + ctx.measureText(p.label).width + 18;
+      for (const s of p.series) {
+        ctx.strokeStyle = s.color; ctx.lineWidth = 2; ctx.setLineDash(s.dash ?? []);
+        ctx.beginPath(); ctx.moveTo(kx, p.y - 9); ctx.lineTo(kx + 16, p.y - 9); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle = C.ink2; ctx.fillText(s.name, kx + 22, p.y - 4);
+        kx += 22 + ctx.measureText(s.name).width + 18;
+      }
+    }
     ctx.textAlign = "right"; ctx.textBaseline = "middle";
     for (let v = lo; v <= hi + step / 2; v += step) {
       ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
@@ -1117,35 +1318,50 @@ function drawChart() {
       ctx.strokeStyle = C.axis; ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.moveTo(L, y(0)); ctx.lineTo(W - R, y(0)); ctx.stroke();
     }
-    // line, broken at gaps > 2 min
-    ctx.strokeStyle = p.color; ctx.lineWidth = 2; ctx.lineJoin = "round";
-    ctx.beginPath();
-    let prev = null;
-    for (const r of recs) {
-      const X = x(r[0] * 60000), Y = y(r[p.col]);
-      if (prev == null || r[0] - prev > 2) ctx.moveTo(X, Y); else ctx.lineTo(X, Y);
-      prev = r[0];
+    // lines, broken at gaps > 2 min; secondary series first so the primary stays on top
+    for (const s of [...p.series].reverse()) {
+      ctx.strokeStyle = s.color; ctx.lineWidth = s.width ?? 2; ctx.lineJoin = "round"; ctx.setLineDash(s.dash ?? []);
+      ctx.beginPath();
+      // one pixel column keeps its first, lowest, highest and last value, so peaks survive thinning
+      let prev = null, col = null, c;
+      const emit = () => { if (col != null) for (const v of [c.lo, c.hi, c.last]) ctx.lineTo(col, y(v)); };
+      for (const r of recs) {
+        const v = s.get(r);
+        if (v == null) { emit(); col = prev = null; continue; }
+        const X = Math.round(x(r[0] * 60000));
+        if (prev == null || r[0] - prev > 2) { emit(); ctx.moveTo(X, y(v)); col = X; c = { lo: v, hi: v, last: v }; }
+        else if (X !== col) { emit(); ctx.lineTo(X, y(v)); col = X; c = { lo: v, hi: v, last: v }; }
+        else { c.lo = Math.min(c.lo, v); c.hi = Math.max(c.hi, v); c.last = v; }
+        prev = r[0];
+      }
+      emit();
+      ctx.stroke(); ctx.setLineDash([]);
     }
-    ctx.stroke();
-    // peaks in view: minute records carry their own min/max, live readings are single values
-    if (recs.length) {
+    // highest and lowest of every series: battery minute records carry their own min/max, the rest are single values
+    for (const s of p.series) {
+      const pts = recs.flatMap(r => {
+        if (s.peaks === "V") return [[recPeak(r, "V", true), recPeak(r, "V", false)]];
+        const v = s.get(r);
+        return v == null ? [] : [[[v, r[0]], [v, r[0]]]];
+      });
+      if (!pts.length) continue;
       let hiPeak;
       for (const above of [true, false]) {
-        const [v, m] = recs.map(r => recPeak(r, p.unit, above)).reduce((a, b) => (above ? b[0] > a[0] : b[0] < a[0]) ? b : a);
+        const [v, m] = pts.map(q => q[above ? 0 : 1]).reduce((a, b) => (above ? b[0] > a[0] : b[0] < a[0]) ? b : a);
         if (!above && v === hiPeak[0] && m === hiPeak[1]) continue;
         hiPeak ??= [v, m];
-        drawPeak(ctx, x(m * 60000), y(v), `${fmt(v, 2)} ${p.unit} at ${peakTime(m)}`, above, p.color, C, p.y, p.y + ph, W - R);
+        drawPeak(ctx, x(m * 60000), y(v), `${fmt(v, 2)} ${p.unit}`, above, s.color, C, p.y, p.y + ph, W - R);
       }
     }
   }
   // time axis
   ctx.fillStyle = C.muted; ctx.textAlign = "center"; ctx.textBaseline = "top";
-  const step = [1, 2, 5, 10, 15, 30, 60, 120, 180].map(m => m * 60000).find(st => (now - t0) / st <= 7) ?? CHART_TICK_MS[24], off = new Date(t0).getTimezoneOffset() * 60000;  // ticks on local-time multiples
+  const step = [1 / 6, 0.25, 0.5, 1, 2, 5, 10, 15, 30, 60, 120, 180].map(m => m * 60000).find(st => (now - t0) / st <= 7) ?? CHART_TICK_MS[24], off = new Date(t0).getTimezoneOffset() * 60000;  // ticks on local-time multiples
   for (let t = Math.ceil((t0 - off) / step) * step + off; t <= now; t += step) {
     const X = x(t);
     ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
-    for (const p of panels) { ctx.beginPath(); ctx.moveTo(Math.round(X) + .5, p.y); ctx.lineTo(Math.round(X) + .5, p.y + ph); ctx.stroke(); }
-    ctx.fillText(hhmm(t), X, H - bottom + 6);
+    for (const p of panels) { ctx.beginPath(); ctx.moveTo(Math.round(X) + .5, p.y); ctx.lineTo(Math.round(X) + .5, p.y + p.ph); ctx.stroke(); }
+    ctx.fillText(step < 60000 ? `${hhmm(t)}:${pad(new Date(t).getSeconds())}` : hhmm(t), X, H - bottom + 6);
   }
   // crosshair
   const h = chart.hover;
@@ -1153,9 +1369,11 @@ function drawChart() {
     const X = x(h[0] * 60000);
     ctx.strokeStyle = C.ink2; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(Math.round(X) + .5, top); ctx.lineTo(Math.round(X) + .5, H - bottom); ctx.stroke();
-    for (const p of panels) {
-      ctx.fillStyle = p.color; ctx.strokeStyle = C.surface; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(X, p.yf(h[p.col]), 4, 0, 7); ctx.fill(); ctx.stroke();
+    for (const p of panels) for (const s of p.series) {
+      const v = s.get(h);
+      if (v == null) continue;
+      ctx.fillStyle = s.color; ctx.strokeStyle = C.surface; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(X, p.yf(v), 4, 0, 7); ctx.fill(); ctx.stroke();
     }
   }
 }
@@ -1167,8 +1385,6 @@ function recPeak(r, unit, high) {
   return [r[vi] ?? r[4], r[ti] == null ? r[0] : r[0] + r[ti] / 60];
 }
 
-// Exact times get seconds; old minute records only know their minute.
-function peakTime(m) { const t = m * 60000; return Number.isInteger(m) ? hhmm(t) : `${hhmm(t)}:${pad(new Date(t).getSeconds())}`; }
 
 function drawPeak(ctx, X, Y, text, above, color, C, yTop, yBottom, xRight) {
   ctx.fillStyle = color; ctx.strokeStyle = C.surface; ctx.lineWidth = 2;
@@ -1192,10 +1408,10 @@ function chartHover(ev) {
   if (!best || Math.abs(best[0] - m) > 10 || px < g.L) { chartLeave(); return; }
   chart.hover = best;
   drawChart();
-  const rows = [
-    [css("--series-v"), `${best[1].toFixed(2)} V`, "battery"],
-    [css("--series-a"), `${best[4] > 0 ? "+" : ""}${fmt(best[4])} A`, "net current"],
-  ];
+  const C = { bat: css("--series-bat"), sun: css("--series-sun"), load: css("--series-load") };
+  const rows = chartPanels(C).flatMap(p => p.series.map(s => [s, s.get(best), p.unit]))
+    .filter(([, v]) => v != null)
+    .map(([s, v, unit]) => [s.color, `${fmt(v, 2)} ${unit}`, s.name]);
   tip.replaceChildren(Object.assign(document.createElement("div"), { textContent: fmtDT(best[0] * 60000) }),
     ...rows.map(([c, v, l]) => {
       const row = document.createElement("div"); row.className = "row";
@@ -1214,16 +1430,46 @@ function chartLeave() { chart.hover = null; $("tip").style.display = "none"; dra
 // 1 h view: every poll since the page opened, minute averages before them.
 function refreshChart() {
   const t0 = Date.now() - chart.hours * 3600e3, recs = loadRecords(t0);
-  const live = chart.hours === 1 ? chart.live.filter(r => r[0] * 60000 >= t0) : [];
-  chart.recs = live.length ? [...recs.filter(r => r[0] + 1 <= live[0][0]), ...live] : recs;
+  const live = chart.hours <= 1 ? chart.live.filter(r => r[0] * 60000 >= t0) : [];
+  chart.recs = live.length ? [...recs.filter(r => r[0] + 1 <= live[0][0]), ...live] : withArchive(recs, t0);
   drawChart();
+  if (!live.length && RAW_URL && Date.now() - chart.pvAt > 60000) loadArchive(t0);
+}
+
+// The archive's minutes win over this browser's: they include hours logged by epever_worker.py with no page open.
+function withArchive(recs, t0) {
+  const m0 = Math.floor(t0 / 60000), arch = chart.minutes.filter(r => r[0] >= m0);
+  if (!arch.length) return recs;
+  const have = new Set(arch.map(r => r[0]));
+  return [...recs.filter(r => !have.has(r[0])), ...arch].sort((a, b) => a[0] - b[0]);
+}
+
+// Minute records carry no panel V; the archive's raw readings supply it. Both refreshed once a minute at most.
+async function loadArchive(t0) {
+  chart.pvAt = Date.now();
+  try {
+    const since = Math.floor(t0);
+    const [pv, minutes] = await Promise.all([`/api/pv?since=${since}`, `/api/minutes?since=${since}`].map(async u => (await fetch(u)).json()));
+    chart.pv = new Map(pv);
+    chart.minutes = minutes;
+    refreshChart();
+  } catch {}
+}
+
+// Polls redraw the chart every CHART_EVERY_MS at most, and not while the tab is hidden or the chart is off screen.
+const CHART_EVERY_MS = 2000;
+let chartAt = 0, chartSeen = true;
+function chartTick() {
+  if (document.hidden || !chartSeen || Date.now() - chartAt < CHART_EVERY_MS) return;
+  chartAt = Date.now();
+  refreshChart();
 }
 
 function setRange(h) {
-  chart.hours = CHART_TICK_MS[h] ? h : 1;
+  chart.hours = CHART_TICK_MS[h] ? h : 1; chart.pvAt = 0;
   lsSet(LS.chartH, chart.hours);
   for (const b of $("ranges").children) b.setAttribute("aria-pressed", String(+b.dataset.h === chart.hours));
-  $("chart").setAttribute("aria-label", `Battery voltage and net battery current, last ${chart.hours} h`);
+  $("chart").setAttribute("aria-label", `Battery and panel voltage, load and solar charging current, last ${chart.hours < 1 ? "15 min" : `${chart.hours} h`}`);
   chart.hover = null; $("tip").style.display = "none";
   refreshChart();
 }
@@ -1296,6 +1542,8 @@ function explainPollError(e) {
 async function connect(port) {
   if (link) return;
   clearMsg("open");
+  if (!port && await connectServer()) return;
+  if (!("serial" in navigator)) { showMsg("open", "info", NO_SERIAL_MSG); return; }
   try {
     const allowed = port ? [] : await navigator.serial.getPorts();
     port ??= allowed.length === 1 ? allowed[0] : await navigator.serial.requestPort();
@@ -1303,7 +1551,12 @@ async function connect(port) {
   const l = new Link(port);
   try { await l.open(); }
   catch (e) { showMsg("open", "err", explainOpenError(e)); return; }
+  await useLink(l);
+}
+
+async function useLink(l) {
   link = l;
+  clearMsg("open");
   firstSample = true;
   failStreak = 0;
   lastClockRead = 0;
@@ -1348,7 +1601,7 @@ async function poll() {
     if (firstSample) { recordSnapshot(s); renderSnaps(); firstSample = false; }
     ingest(s);
     live = s;
-    chart.live.push([s.t / 60000, s.batV, s.batV, s.batV, s.netA]);
+    chart.live.push(liveRec(s.t, s.batV, s.netA, s.chgA, s.loadA, s.pvV));
     queueRaw(s);
     while (chart.live[0][0] < s.t / 60000 - 60) chart.live.shift();
     await checkCycle(s);
@@ -1360,15 +1613,21 @@ async function poll() {
     failStreak = 0;
     clearMsg("poll");
     const { faults, warns } = statusIssues(s);
-    if (faults.length) showMsg("faults", "err", `Controller reports:\n• ${faults.join("\n• ")}`); else clearMsg("faults");
+    const hex = v => `0x${(v ?? 0).toString(16).toUpperCase().padStart(4, "0")}`;
+    if (faults.length) showMsg("faults", "err", `Controller reports:\n• ${faults.join("\n• ")}\nStatus words: battery ${hex(s.battStatus)}, charging ${hex(s.chgStatus)}, load ${hex(s.dischgStatus)}`); else clearMsg("faults");
     if (warns.length) showMsg("warns", "warn", `• ${warns.join("\n• ")}`); else clearMsg("warns");
-    setStatus(true, `Updated ${hhmm(s.t)}:${pad(new Date(s.t).getSeconds())}`);
-    renderLive(); renderCtl(); refreshChart(); renderCharging(); renderCycle();
+    setStatus(true, `Updated ${hhmm(s.t)}:${pad(new Date(s.t).getSeconds())}${serverMode() ? " via epever_worker.py" : ""}`);
+    renderLive(); renderGauges(); renderCtl(); chartTick(); renderCharging(); renderCycle();
     const minute = Math.floor(s.t / 60000);
     if (minute !== lastDaysMinute) { lastDaysMinute = minute; renderDays(); }
   } catch (e) {
     if (!link) return;
     failStreak++;
+    if (serverMode() && (e?.kind === "closed" || e instanceof TypeError)) {
+      await disconnect("Waiting for epever_worker.py");
+      showMsg("poll", "info", "epever_worker.py isn't reading the controller (cable unplugged or service stopped). The page picks it up again within seconds.");
+      return;
+    }
     if (e?.name === "NetworkError" || e?.name === "NotFoundError" || e?.kind === "closed") {
       await disconnect("Disconnected");
       showMsg("poll", "err", "Lost the serial port (cable unplugged?). It will reconnect automatically when plugged back in, or press Connect.");
@@ -1378,7 +1637,7 @@ async function poll() {
     setStatus(true, `Connected, last read failed (${failStreak}×)`);
   } finally {
     polling = false;
-    if (link) schedulePoll(Math.max(0, POLL_MS - (Date.now() - started)));
+    if (link) schedulePoll(Math.max(0, (link.pollMs ?? POLL_MS) - (Date.now() - started)));
   }
 }
 
@@ -1443,7 +1702,9 @@ async function switchCharging(on) {
 const REST_TABLE_LO = [[9.5, 0], [10.8, 1], [12.8, 10], [12.9, 20], [13.0, 30], [13.1, 40], [13.3, 70], [13.4, 99], [13.5, 100]];
 const REST_TABLE_HI = [[9.5, 0], [10.8, 1], [12.8, 10], [12.9, 20], [13.0, 30], [13.1, 40], [13.3, 90], [13.4, 99], [13.5, 100]];
 const REST_MIN = 15;            // minutes without current before a reading counts (manual)
-const REST_MAX_A = 0.15;        // |net| and load current still counted as rest
+const REST_MAX_A = 0.6;         // |net| and load current still counted as rest (router + fridge standby ≈ 0.47 A)
+const PAIR_MIN_AH = 5;          // two rest readings need at least this much charge between them
+const PAIR_MAX_SPREAD = 1.5;    // max/min estimate ratio for a pair to count
 const SOC_SLACK = 3;            // ± % for a "reference only" table and 10 mV readings
 const CAP_MAX_SPREAD = 1.3;     // max/min estimate ratio above which the reading is too flat to use
 let restSince = null;
@@ -1457,23 +1718,71 @@ function socAt(table, v) {
   return 100;
 }
 
-// Each poll: after REST_MIN minutes at rest, keep this rest's latest voltage with the Ah out since the last full charge.
+// Each poll: after REST_MIN minutes at rest, keep this rest's latest voltage with the running Ah count
+// (and the Ah out since the last full charge, when one was seen).
 function trackRest(s) {
+  if (serverMode()) return;  // the worker keeps rest points
   const resting = Math.abs(s.netA) <= REST_MAX_A && s.chgA < 0.05 && s.loadA <= REST_MAX_A;
   if (!resting) { restSince = null; return; }
   restSince ??= s.t;
-  if (s.t - restSince < REST_MIN * 60000 || state.approx || state.deficitAh == null) return;
+  if (s.t - restSince < REST_MIN * 60000 || state.ahNet == null) return;
   const pts = state.restPoints ??= [];
-  const pt = { t: s.t, restSince, v: s.batV, ahOut: state.deficitAh, fullAt: state.lastFullAt };
+  const pt = { t: s.t, restSince, v: s.batV, ahNet: state.ahNet, epoch: state.ahEpoch, gapMin: state.ahNetGapMin,
+    ahOut: state.approx || state.deficitAh == null ? null : state.deficitAh, fullAt: state.lastFullAt };
   if (pts.at(-1)?.restSince === restSince) pts[pts.length - 1] = pt; else pts.push(pt);
-  if (pts.length > 20) pts.shift();
+  if (pts.length > 60) pts.shift();
   saveState();
 }
 
+const socBounds = v => [Math.max(0, socAt(REST_TABLE_LO, v) - SOC_SLACK), Math.min(100, socAt(REST_TABLE_HI, v) + SOC_SLACK),
+  (socAt(REST_TABLE_LO, v) + socAt(REST_TABLE_HI, v)) / 2];
+
+// Two rest readings p (older), q: capacity = Ah between them ÷ change in table SoC; null if the change can't be told.
+function pairCapacity(p, q) {
+  const dAh = q.ahNet - p.ahNet;
+  if (p.ahNet == null || q.ahNet == null || p.epoch !== q.epoch || Math.abs(dAh) < PAIR_MIN_AH) return null;
+  const [a, b] = dAh > 0 ? [p, q] : [q, p];  // a = the emptier end
+  const [loA, hiA, midA] = socBounds(a.v), [loB, hiB, midB] = socBounds(b.v);
+  const dMin = loB - hiA, dMax = hiB - loA;
+  if (dMin <= 0 || midB <= midA) return { p, q, dAh, tooFlat: true };
+  const ah = Math.abs(dAh) * 100;
+  return { p, q, dAh, c: ah / (midB - midA), cMin: ah / dMax, cMax: ah / dMin, gapMin: q.gapMin - p.gapMin };
+}
+
+// The pair whose estimate is tightest, or the widest-apart pair to report why none works yet.
+function bestPair() {
+  const pts = state.restPoints ?? [];
+  let best = null, widest = null;
+  for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+    const r = pairCapacity(pts[i], pts[j]);
+    if (!r) continue;
+    if (!r.tooFlat && (!best || r.cMax / r.cMin < best.cMax / best.cMin)) best = r;
+    if (!widest || Math.abs(r.dAh) > Math.abs(widest.dAh)) widest = r;
+  }
+  return best && best.cMax / best.cMin <= PAIR_MAX_SPREAD ? best : { none: true, widest };
+}
+
+function pairText() {
+  const pts = state.restPoints ?? [], r = bestPair();
+  const sign = a => (a > 0 ? "+" : a < 0 ? "−" : "") + fmt(Math.abs(a), 1);
+  if (!r.none) {
+    return `Capacity ≈ ${fmt(r.c, 0)} Ah (${fmt(r.cMin, 0)}–${fmt(r.cMax, 0)}), from two rest readings: ${fmt(r.p.v)} V (${fmtDT(r.p.t)}) and ` +
+      `${fmt(r.q.v)} V (${fmtDT(r.q.t)}), ${sign(r.dAh)} Ah between them` + (r.gapMin ? `, ${fmtDur(r.gapMin * 60)} of it from the controller's counters.` : ".");
+  }
+  if (!pts.length) return "Rest readings: none yet. One is taken after 15 min with no charging and the load under 0.6 A (fridge compressor off).";
+  const last = pts.at(-1), w = r.widest;
+  return `Rest readings: ${pts.length}, latest ${fmt(last.v)} V (${fmtDT(last.t)}).` + (w
+    ? ` The pair furthest apart (${fmt(w.p.v)} → ${fmt(w.q.v)} V, ${sign(w.dAh)} Ah) is still too close on the flat part of the curve; ` +
+      "a rest at about 13.35 V or more (or 12.9 V or less) makes a pair usable."
+    : ` Two readings at least ${PAIR_MIN_AH} Ah apart are needed.`);
+}
+
 // Full charge (exactly 100 %) to the latest resting reading: capacity = Ah out ÷ (1 − SoC at that voltage).
-function capacityText() {
-  const p = state.restPoints?.at(-1);
-  if (!p) return "Capacity: no resting reading yet. The page takes one when the battery rests 15 min (no charging, load under 0.15 A, e.g. fridge and laptop off); at 13.0 V or lower it gives a usable number.";
+function capacityText() { return [fullText(), pairText()].filter(Boolean).join("\n"); }
+
+function fullText() {
+  const p = state.restPoints?.findLast(p => p.ahOut != null);
+  if (!p) return null;
   const lo = Math.max(0, socAt(REST_TABLE_LO, p.v) - SOC_SLACK), hi = Math.min(99, socAt(REST_TABLE_HI, p.v) + SOC_SLACK);
   const mid = (socAt(REST_TABLE_LO, p.v) + socAt(REST_TABLE_HI, p.v)) / 2;
   const cMin = p.ahOut / (1 - lo / 100), cMax = p.ahOut / (1 - hi / 100);
@@ -1545,9 +1854,9 @@ function renderCycle() {
 }
 
 // ---------- startup ----------
-function init() {
-  $("connect").onclick = () => connect();
-  $("disconnect").onclick = () => disconnect();
+async function init() {
+  $("connect").onclick = () => { autoServer = true; connect(); };
+  $("disconnect").onclick = () => { autoServer = false; disconnect(); };
   $("charging").onclick = toggleCharging;
   $("cycle-start").onclick = startCycle;
   $("csv-log").onclick = exportLog;
@@ -1558,6 +1867,8 @@ function init() {
   cv.addEventListener("pointermove", chartHover);
   cv.addEventListener("pointerleave", chartLeave);
   new ResizeObserver(() => drawChart()).observe(cv);
+  new IntersectionObserver(([e]) => { chartSeen = e.isIntersecting; if (chartSeen) refreshChart(); }).observe(cv);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshChart(); });
   document.documentElement.classList.add("js");
   const stick = () => $("bar").classList.toggle("stuck", $("tiles").getBoundingClientRect().bottom < $("bar").offsetHeight);
   addEventListener("scroll", stick, { passive: true }); addEventListener("resize", stick); stick();
@@ -1570,13 +1881,17 @@ function init() {
   renderAh(); renderCtl(); renderDays(); renderSnaps(); setRange(lsGet(LS.chartH, 1)); renderCycle();
   syncArchive(); loadRaw(); renderStats();
   setInterval(sendRaw, 10000);
-  setInterval(renderStats, 300000);
+  setInterval(() => { renderStats(); loadSnaps(); loadRanges(); }, 300000);
+  initGauges(); loadSnaps(); loadRanges();
   $("stats-by").onclick = e => { if (e.target.dataset?.by) renderStats(e.target.dataset.by); };
   if (state.last) $("t-ahd").textContent += `, last logged ${fmtDT(state.last.t)}`;
 
+  setInterval(() => { if (!link && autoServer) connectServer(); }, SERVER_FRESH_MS);
+  if (await connectServer()) clearMsg("open");
   if (!("serial" in navigator)) {
-    $("connect").disabled = true;
-    showMsg("open", "err", "This browser has no Web Serial API. Use Chrome or Chromium (desktop) and open this file directly; Firefox and Safari don't support it.");
+    if (link) return;
+    $("connect").disabled = !ARCHIVE_URL;
+    showMsg("open", "info", NO_SERIAL_MSG);
     return;
   }
   // Reconnect to a port this page was already allowed to use; also on re-plug.
